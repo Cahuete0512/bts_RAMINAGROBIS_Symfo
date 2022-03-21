@@ -1,20 +1,41 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello EnchereController!{% endblock %}
-
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Xampp/htdocs/bts_RAMINAGROBIS_Symfo/bts_RAMINAGROBIS_Symfo/src/Controller/EnchereController.php'|file_link(0) }}">src/Controller/EnchereController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Xampp/htdocs/bts_RAMINAGROBIS_Symfo/bts_RAMINAGROBIS_Symfo/templates/enchere/index.html.twig'|file_link(0) }}">templates/enchere/index.html.twig</a></code></li>
-    </ul>
+{% block title %}Enchère sur les prix de produits par les fournisseurs{% endblock %}
+{% block stylesheets %}
+<div class="app-bar pos-absolute bg-black z-1" >
+    <img width="100px" height="50px" src="{{ asset('logoCentrale.PNG')}}" style="position:center;top:-10px" alt="#">
 </div>
+{% endblock %}
+{% block body %}
+    <div class="table table-border cell-border"></br>
+        <p><table class="table table-border cell-border">
+            <thead>
+            <tr>
+                <th colspan="2"><strong>Produits</strong><input type="text" value="recherche produits" style="height: 30px; width: 200px; float:right;"></th>
+                <th><strong>Proposition Prix</strong></th>
+                <th><strong>Position</strong></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Reference</td>
+                <td>Quantité de produits</td>
+                <td><input type="text" value="Nouveau prix" style="height: 30px; width: 200px; "></td>
+                <td>Pastille</td>
+            </tr>
+            <tr>
+                <td>Reference</td>
+                <td>Quantité de produits</td>
+                <td><input type="text" value="Nouveau prix" style="height: 30px; width: 200px;"></td>
+                <td>Pastille</td>
+            </tr>
+            <tr>
+                <td>Reference</td>
+                <td>Quantité de produits</td>
+                <td><input type="text" value="Nouveau prix" style="height: 30px; width: 200px;"></td>
+                <td>Pastille</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
