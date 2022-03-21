@@ -1,19 +1,20 @@
 ## Table des matières
-1. [Description](#Description de l'IHM)
-2. [Version](#Version des technos utilisées)
-3. [Création du projet](#Création du projet)
-4. [Installation Doctrine](#Installation  de l'ORM doctrine)
-5. [Configuration de la base de données](#Configuration de la base de données)
-6. [Création de la base de données](#Création de la base de données)
-7. [Création d'entités](#Création d entités dans la BDD)
-8. [Migrations et mise à jour de la BDD](#Migrations et update de la BDD)
-9. [Création controller](#Création controller)
-10. [Execution du projet](#Execution du projet)
+***
+1. [Description](#1--description)
+2. [Version](#2--version)
+3. [Création du projet](#3--cration-du-projet)
+4. [Installation Doctrine](#4--installation-doctrine)
+5. [Configuration de la base de données](#5--configuration-base-de-donnes)
+6. [Création de la base de données](#6--cration-base-de-donnes)
+7. [Création d'entités](#7--cration-dentit)
+8. [Migrations et mise à jour de la BDD](#8--migrations-et-mise--jour-de-la-bdd)
+9. [Création controller](#9--cration-controller)
+10. [Execution du projet](#10--excution-du-projet)
 
 ### 1- Description
 ***
 Interface utilisateur connectée à l'API de BTS_RAMINAGROBIS_API.  
-[API du projet lié par l'API C#](#https://github.com/Cahuete0512/bts_RAMINAGROBIS_API.git)
+[API du projet lié par l'API C#](#https://github.com/Cahuete0512/bts_RAMINAGROBIS_API.git)  
 Permet aux fournisseurs de proposer un meilleur prix de produit :
 + Si la pastille est verte, il a le meilleur tarif
 + Si la pastille est orange, il est à égalité avec le prix d'un produit d'un autre fournisseur
