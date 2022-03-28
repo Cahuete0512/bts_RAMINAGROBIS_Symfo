@@ -4,7 +4,9 @@
 {% block stylesheets %}
 <br><div class="app-bar pos-absolute bg-black z-2" >
     <div class="cell-md-4"><img width="100px" height="60px" src="{{ asset('logoCentrale.PNG')}}" style="position:center;top:-10px" alt="#"></div>
-    <div class="cell-md-5 pos-fixed pos-top-right"><h2 style ="color: #FFFFFF; text-align: left;">{{ data.0.nomContact }} {{ data.0.prenomContact }}</h2></div>
+    <div class="cell-md-5 pos-fixed pos-top-right">
+        <h2 style ="color: #FFFFFF; text-align: left;">{{ data.numeroSemaine }} {{ data.annee }}</h2>
+    </div>
 </div>
 {% endblock %}
 {% block body %}
@@ -12,13 +14,13 @@
         <p><table class="table table-border cell-border">
             <thead>
             <tr>
-                <th colspan="2"><strong>Produits</strong>
+                <th colspan="2"><strong>Liste des Produits</strong>
                     <label>
                         <input type="text" value="recherche produits" style="height: 30px; width: 200px; float:right;">
                     </label>
                 </th>
-                <th><strong>Proposition Prix</strong></th>
-                <th><strong>Position</strong></th>
+                <th><strong>Proposition Nouveau Prix</strong></th>
+                <th><strong>Votre Position</strong></th>
             </tr>
             </thead>
             <tbody>

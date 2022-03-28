@@ -13,15 +13,6 @@ class Enchere
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'integer')]
-    private $numeroPanier;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private $refProduit;
-
-    #[ORM\Column(type: 'integer')]
-    private $idFournisseur;
-
     #[ORM\Column(type: 'datetime')]
     private $dateEnchere;
 
@@ -45,28 +36,9 @@ class Enchere
         return $this;
     }
 
-    public function getRefProduit(): ?string
-    {
-        return $this->refProduit;
-    }
-
-    public function setRefProduit(string $refProduit): self
-    {
-        $this->refProduit = $refProduit;
-
-        return $this;
-    }
-
     public function getIdFournisseur(): ?int
     {
         return $this->idFournisseur;
-    }
-
-    public function setIdFournisseur(int $idFournisseur): self
-    {
-        $this->idFournisseur = $idFournisseur;
-
-        return $this;
     }
 
     public function getDateEnchere(): ?\DateTimeInterface

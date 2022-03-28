@@ -4,7 +4,7 @@ namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class ApiService
+class ApiServiceGetEnchere
 {
 
     private $client;
@@ -18,8 +18,9 @@ class ApiService
     {
         $response = $this->client->request(
             'GET',
-            'https://localhost:5001/Fournisseurs'
+            'https://localhost:5001/PaniersGlobaux/panier/byIdPanier/13'
         );
+
 
         $statusCode = $response->getStatusCode();
         // $statusCode = 200
