@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FournisseurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use phpDocumentor\Reflection\Types\Integer;
 
@@ -37,6 +39,18 @@ class Fournisseur
 
     #[ORM\Column(type: 'integer')]
     private $idEnchere;
+
+    #[ORM\ManyToOne(targetEntity: LignePanier::class, inversedBy: 'id_fournisseur')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $lignePanier;
+
+    #[ORM\OneToMany(mappedBy: 'fournisseur', targetEntity: Enchere::class)]
+    private $id_enchere;
+
+    public function __construct()
+    {
+        $this->id_enchere = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -190,6 +204,40 @@ class Fournisseur
     public function setIdEnchere(string $idEnchere): self
     {
         $this->idEnchere = $idEnchere;
+
+        return $this;
+    }
+
+    public function getLignePanier(): ?LignePanier
+    {
+        return $this->lignePanier;
+    }
+
+    public function setLignePanier(?LignePanier $lignePanier): self
+    {
+        $this->lignePanier = $lignePanier;
+
+        return $this;
+    }
+
+    public function addIdEnchere(Enchere $idEnchere): self
+    {
+        if (!$this->id_enchere->contains($idEnchere)) {
+            $this->id_enchere[] = $idEnchere;
+            $idEnchere->setFournisseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIdEnchere(Enchere $idEnchere): self
+    {
+        if ($this->id_enchere->removeElement($idEnchere)) {
+            // set the owning side to null (unless already changed)
+            if ($idEnchere->getFournisseur() === $this) {
+                $idEnchere->setFournisseur(null);
+            }
+        }
 
         return $this;
     }
