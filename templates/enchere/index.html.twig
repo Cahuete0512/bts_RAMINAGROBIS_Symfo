@@ -10,6 +10,7 @@
 </div>
 {% endblock %}
 {% block body %}
+    {{ form_start(formulaire, {'action': path('app_enchere'), 'method' : 'GET'}) }}
     <div class="table table-border cell-border"><br>
         <p><table class="table table-border cell-border">
             <thead>
@@ -28,8 +29,10 @@
                 <td>Reference</td>
                 <td>Quantité de produits</td>
                 <td>
-                    <label>
-                        <input type="text" value="Nouveau prix" style="height: 30px; width: 200px; ">
+                    <label style="height: 30px; width: 200px;">
+                        {{ form_errors(formulaire.prix_enchere) }}
+                        {{ form_widget(formulaire.prix_enchere) }}
+
                     </label>
                 </td>
                 <td>Pastille</td>
@@ -56,7 +59,9 @@
             </tr>
             </tbody>
         </table>
-        <button class="button success outline rounded place-right">Valider</button>
-
+        <button type = "submit" class="button success outline rounded place-right">
+            Valider</button>
+        {{ form_rest (formulaire) }}
+        {{ form_end(formulaire) }}
     </div>
 {% endblock %}
