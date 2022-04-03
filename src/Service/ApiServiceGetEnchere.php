@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ApiServiceGetEnchere
@@ -14,22 +15,15 @@ class ApiServiceGetEnchere
         $this->client = $client;
     }
 
-    public function getApiData(): array
+    public function getApiData($idPanier): mixed
     {
         $response = $this->client->request(
             'GET',
-            'https://localhost:5001/PaniersGlobaux/panier/byIdPanier/13'
+            'https://localhost:5001/PaniersGlobaux/panier/byIdPanier/'.$idPanier
         );
 
-
-        $statusCode = $response->getStatusCode();
-        // $statusCode = 200
-        $contentType = $response->getHeaders()['content-type'][0];
         // $contentType = 'application/json'
-        $content = $response->getContent();
-        // $content = '{"id":521583, "name":"symfony-docs", ...}'
-        $content = $response->toArray();
-        // $content = ['id' => 521583, 'name' => 'symfony-docs', ...]
+        $content = json_decode($response->getContent());
 
         return $content;
 

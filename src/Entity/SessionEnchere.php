@@ -6,6 +6,7 @@ use App\Repository\SessionEnchereRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 
 #[ORM\Entity(repositoryClass: SessionEnchereRepository::class)]
 class SessionEnchere
@@ -16,7 +17,7 @@ class SessionEnchere
     private $id;
 
     #[ORM\Column(type: 'integer')]
-    private $idLignePanier;
+    private $idPanier;
 
     #[ORM\Column(type: 'datetime')]
     private $debutEnchere;
@@ -24,12 +25,12 @@ class SessionEnchere
     #[ORM\Column(type: 'datetime')]
     private $finEnchere;
 
-    #[ORM\OneToMany(mappedBy: 'sessionEnchere', targetEntity: LignePanier::class)]
-    private $id_ligne_panier;
+    #[ORM\OneToMany(mappedBy: 'sessionEnchere', targetEntity: LignePanier::class, cascade: ['persist'])]
+    private $lignePaniers;
 
     public function __construct()
     {
-        $this->id_ligne_panier = new ArrayCollection();
+        $this->lignePaniers = new ArrayCollection();
     }
 
     /**
@@ -43,20 +44,28 @@ class SessionEnchere
     /**
      * @return int|null
      */
-    public function getIdLignePanier(): ?int
+    public function getIdPanier(): ?int
     {
-        return $this->idLignePanier;
+        return $this->idPanier;
     }
 
     /**
-     * @param int $idLignePanier
+     * @param integer $idPanier
      * @return $this
      */
-    public function setIdPanier(int $idLignePanier): self
+    public function setIdPanier(int $idPanier): self
     {
-        $this->idLignePanier = $idLignePanier;
+        $this->idPanier = $idPanier;
 
         return $this;
+    }
+
+    /**
+     * @return
+     */
+    public function getLignePaniers(): Collection
+    {
+        return $this->lignePaniers;
     }
 
     /**

@@ -19,37 +19,23 @@ class Fournisseur
     #[ORM\Column(type: 'string', length: 255)]
     private $societe;
 
-    #[ORM\Column(type: 'string', length: 4)]
-    private $civiliteContact;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private $nomContact;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private $prenomContact;
-
     #[ORM\Column(type: 'string', length: 255)]
     private $email;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private $adresse;
-
-    #[ORM\Column(type: 'string', length: 255)]
     private $numeroSession;
 
-    #[ORM\Column(type: 'integer')]
-    private $idEnchere;
-
-    #[ORM\ManyToOne(targetEntity: LignePanier::class, inversedBy: 'id_fournisseur')]
+    #[ORM\ManyToMany(targetEntity: LignePanier::class, inversedBy: 'fournisseurs')]
     #[ORM\JoinColumn(nullable: false)]
-    private $lignePanier;
+    private $lignePaniers;
 
     #[ORM\OneToMany(mappedBy: 'fournisseur', targetEntity: Enchere::class)]
-    private $id_enchere;
+    private $encheres;
 
     public function __construct()
     {
-        $this->id_enchere = new ArrayCollection();
+        $this->encheres = new ArrayCollection();
+        $this->lignePaniers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -79,63 +65,6 @@ class Fournisseur
     /**
      * @return string|null
      */
-    public function getCiviliteContact(): ?string
-    {
-        return $this->civiliteContact;
-    }
-
-    /**
-     * @param $civiliteContact
-     * @return $this
-     */
-    public function setCiviliteContact($civiliteContact): self
-    {
-        $this->civiliteContact = $civiliteContact;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getNomContact(): ?string
-    {
-        return $this->nomContact;
-    }
-
-    /**
-     * @param $nomContact
-     * @return $this
-     */
-    public function setNomContact($nomContact): self
-    {
-        $this->nomContact = $nomContact;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPrenomContact(): ?string
-    {
-        return $this->prenomContact;
-    }
-
-    /**
-     * @param $prenomContact
-     * @return $this
-     */
-    public function setPrenomContact($prenomContact): self
-    {
-        $this->prenomContact = $prenomContact;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
     public function getEmail(): ?string
     {
         return $this->email;
@@ -148,25 +77,6 @@ class Fournisseur
     public function setEmail($email): self
     {
         $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAdresse(): ?string
-    {
-        return $this->adresse;
-    }
-
-    /**
-     * @param mixed $adresse
-     * @return $this
-     */
-    public function setAdresse($adresse): self
-    {
-        $this->adresse = $adresse;
 
         return $this;
     }
@@ -190,52 +100,56 @@ class Fournisseur
     }
 
     /**
-     * @return int|null
+     * @return Collection|null
      */
-    public function getIdEnchere(): ?int
+    public function getEncheres(): ?Collection
     {
-        return $this->idEnchere;
+        return $this->encheres;
     }
 
-    /**
-     * @param string $idEnchere
-     * @return $this
-     */
-    public function setIdEnchere(string $idEnchere): self
+    public function getLignePaniers(): ?Collection
     {
-        $this->idEnchere = $idEnchere;
-
-        return $this;
+        return $this->lignePaniers;
     }
 
-    public function getLignePanier(): ?LignePanier
+    public function addEnchere(Enchere $enchere): self
     {
-        return $this->lignePanier;
-    }
-
-    public function setLignePanier(?LignePanier $lignePanier): self
-    {
-        $this->lignePanier = $lignePanier;
-
-        return $this;
-    }
-
-    public function addIdEnchere(Enchere $idEnchere): self
-    {
-        if (!$this->id_enchere->contains($idEnchere)) {
-            $this->id_enchere[] = $idEnchere;
-            $idEnchere->setFournisseur($this);
+        if (!$this->encheres->contains($enchere)) {
+            $this->encheres[] = $enchere;
+            $enchere->setFournisseur($this);
         }
 
         return $this;
     }
 
-    public function removeIdEnchere(Enchere $idEnchere): self
+    public function removeEnchere(Enchere $enchere): self
     {
-        if ($this->id_enchere->removeElement($idEnchere)) {
+        if ($this->encheres->removeElement($enchere)) {
             // set the owning side to null (unless already changed)
-            if ($idEnchere->getFournisseur() === $this) {
-                $idEnchere->setFournisseur(null);
+            if ($enchere->getFournisseur() === $this) {
+                $enchere->setFournisseur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addLignePanier(LignePanier $lignePanier): self
+    {
+        if (!$this->lignePaniers->contains($lignePanier)) {
+            $this->lignePaniers[] = $lignePanier;
+            $lignePanier->setFournisseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLignePanier(LignePanier $lignePanier): self
+    {
+        if ($this->lignePaniers->removeElement($lignePanier)) {
+            // set the owning side to null (unless already changed)
+            if ($lignePanier->getFournisseur() === $this) {
+                $lignePanier->setFournisseur(null);
             }
         }
 

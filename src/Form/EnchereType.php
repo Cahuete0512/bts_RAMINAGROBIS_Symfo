@@ -19,6 +19,9 @@ class EnchereType extends AbstractType
                 'attr'=>['placeholder' => 'Nouveau Prix'
                 ]
             ])
+            ->add('save', SubmitType::class, [
+                    'attr' => ['class' => 'button success outline rounded place-right']
+                ])
             ->getForm();
     }
 

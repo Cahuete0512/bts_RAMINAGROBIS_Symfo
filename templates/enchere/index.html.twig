@@ -10,7 +10,7 @@
 </div>
 {% endblock %}
 {% block body %}
-    {{ form_start(formulaire, {'action': path('app_enchere'), 'method' : 'GET'}) }}
+    {{ form_start(formulaire, {'action': path('app_enchere'), 'method' : 'POST'}) }}
     <div class="table table-border cell-border"><br>
         <p><table class="table table-border cell-border">
             <thead>
@@ -59,8 +59,6 @@
             </tr>
             </tbody>
         </table>
-        <button type = "submit" class="button success outline rounded place-right">
-            Valider</button>
         {{ form_rest (formulaire) }}
         {{ form_end(formulaire) }}
     </div>

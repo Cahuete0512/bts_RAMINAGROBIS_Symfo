@@ -21,26 +21,20 @@ class LignePanier
     #[ORM\Column(type: 'integer')]
     private $quantite;
 
-    #[ORM\Column(type: 'integer')]
-    private $idFournisseur;
-
-    #[ORM\Column(type: 'integer')]
-    private $idEnchere;
-
-    #[ORM\ManyToOne(targetEntity: SessionEnchere::class, inversedBy: 'id_ligne_panier')]
+    #[ORM\ManyToOne(targetEntity: SessionEnchere::class, inversedBy: 'lignePaniers')]
     #[ORM\JoinColumn(nullable: false)]
     private $sessionEnchere;
 
     #[ORM\OneToMany(mappedBy: 'lignePanier', targetEntity: Enchere::class)]
-    private $id_enchere;
+    private $encheres;
 
-    #[ORM\OneToMany(mappedBy: 'lignePanier', targetEntity: Fournisseur::class)]
-    private $id_fournisseur;
+    #[ORM\ManyToMany(targetEntity: Fournisseur::class, mappedBy: 'lignePaniers', cascade: ['persist'])]
+    private $fournisseurs;
 
     public function __construct()
     {
-        $this->id_enchere = new ArrayCollection();
-        $this->id_fournisseur = new ArrayCollection();
+        $this->encheres = new ArrayCollection();
+        $this->fournisseurs = new ArrayCollection();
     }
 
     /**
@@ -90,41 +84,19 @@ class LignePanier
     }
 
     /**
-     * @return int|null
+     * @return Collection|null
      */
-    public function getIdFournisseur(): ?int
+    public function getFournisseurs(): ?Collection
     {
-        return $this->idFournisseur;
+        return $this->fournisseurs;
     }
 
     /**
-     * @param int $idFournisseur
-     * @return $this
+     * @return Collection|null
      */
-    public function setIdFournisseur(int $idFournisseur): self
+    public function getEncheres(): ?Collection
     {
-        $this->idFournisseur = $idFournisseur;
-
-        return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getIdEnchere(): ?int
-    {
-        return $this->idEnchere;
-    }
-
-    /**
-     * @param int $idEnchere
-     * @return $this
-     */
-    public function setIdEnchere(int $idEnchere): self
-    {
-        $this->idEnchere = $idEnchere;
-
-        return $this;
+        return $this->encheres;
     }
 
     public function getSessionEnchere(): ?SessionEnchere
@@ -139,44 +111,44 @@ class LignePanier
         return $this;
     }
 
-    public function addIdEnchere(Enchere $idEnchere): self
+    public function addEnchere(Enchere $enchere): self
     {
-        if (!$this->id_enchere->contains($idEnchere)) {
-            $this->id_enchere[] = $idEnchere;
-            $idEnchere->setLignePanier($this);
+        if (!$this->encheres->contains($enchere)) {
+            $this->encheres[] = $enchere;
+            $enchere->setLignePaniers($this);
         }
 
         return $this;
     }
 
-    public function removeIdEnchere(Enchere $idEnchere): self
+    public function removeEnchere(Enchere $enchere): self
     {
-        if ($this->id_enchere->removeElement($idEnchere)) {
+        if ($this->encheres->removeElement($enchere)) {
             // set the owning side to null (unless already changed)
-            if ($idEnchere->getLignePanier() === $this) {
-                $idEnchere->setLignePanier(null);
+            if ($enchere->getLignePanier() === $this) {
+                $enchere->setLignePanier(null);
             }
         }
 
         return $this;
     }
 
-    public function addIdFournisseur(Fournisseur $idFournisseur): self
+    public function addFournisseur(Fournisseur $fournisseur): self
     {
-        if (!$this->id_fournisseur->contains($idFournisseur)) {
-            $this->id_fournisseur[] = $idFournisseur;
-            $idFournisseur->setLignePanier($this);
+        if (!$this->fournisseurs->contains($fournisseur)) {
+            $this->fournisseurs[] = $fournisseur;
+            $fournisseur->setLignePanier($this);
         }
 
         return $this;
     }
 
-    public function removeIdFournisseur(Fournisseur $idFournisseur): self
+    public function removeFournisseur(Fournisseur $fournisseur): self
     {
-        if ($this->id_fournisseur->removeElement($idFournisseur)) {
+        if ($this->fournisseurs->removeElement($fournisseur)) {
             // set the owning side to null (unless already changed)
-            if ($idFournisseur->getLignePanier() === $this) {
-                $idFournisseur->setLignePanier(null);
+            if ($fournisseur->getLignePanier() === $this) {
+                $fournisseur->setLignePanier(null);
             }
         }
 

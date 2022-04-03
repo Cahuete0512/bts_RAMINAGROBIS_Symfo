@@ -19,11 +19,11 @@ class Enchere
     #[ORM\Column(type: 'float')]
     private $prixEnchere;
 
-    #[ORM\ManyToOne(targetEntity: LignePanier::class, inversedBy: 'id_enchere')]
+    #[ORM\ManyToOne(targetEntity: LignePanier::class, inversedBy: 'encheres')]
     #[ORM\JoinColumn(nullable: false)]
     private $lignePanier;
 
-    #[ORM\ManyToOne(targetEntity: Fournisseur::class, inversedBy: 'id_enchere')]
+    #[ORM\ManyToOne(targetEntity: Fournisseur::class, inversedBy: 'encheres')]
     #[ORM\JoinColumn(nullable: false)]
     private $fournisseur;
 
@@ -42,11 +42,6 @@ class Enchere
         $this->numeroPanier = $numeroPanier;
 
         return $this;
-    }
-
-    public function getIdFournisseur(): ?int
-    {
-        return $this->idFournisseur;
     }
 
     public function getDateEnchere(): ?\DateTimeInterface
