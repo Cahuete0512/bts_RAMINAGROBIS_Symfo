@@ -6,14 +6,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class EnchereInnexistanteController extends AbstractController
+class EnchereInexistanteController extends AbstractController
 {
-    #[Route('/enchere/innexistante', name: 'app_enchere_innexistante')]
+    #[Route('/enchere/inexistante', name: 'app_enchere_inexistante')]
     public function index(): Response
     {
 
-        return $this->render('enchere_innexistante/enchereInnexistante.html.twig', [
-            'controller_name' => 'EnchereInnexistanteController',
+        return $this->render('enchere_inexistante/enchereInexistante.html.twig', [
+            'controller_name' => 'EnchereInexistanteController',
         ]);
     }
 }

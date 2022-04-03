@@ -43,7 +43,7 @@ class EnchereController extends AbstractController
         $sessionEnchere=$sessionRepo->findOneByDate(new \DateTime());
 
         if($sessionEnchere==null){
-            return $this->redirectToRoute('app_enchere_innexistante');
+            return $this->redirectToRoute('app_enchere_inexistante');
         }
 
         return $this->render('enchere/enchere.html.twig', [
