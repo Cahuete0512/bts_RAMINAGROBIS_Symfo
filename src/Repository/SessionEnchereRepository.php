@@ -33,6 +33,18 @@ class SessionEnchereRepository extends ServiceEntityRepository
         }
     }
 
+    public function findOneByDate($date): ?SessionEnchere
+    {
+        return $this->createQueryBuilder('enchere')
+            ->andWhere('enchere.debutEnchere <= :debut')
+            ->andWhere('enchere.finEnchere >= :fin')
+            ->setParameter('debut', $date)
+            ->setParameter('fin', $date)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
+
     /**
      * @throws ORMException
      * @throws OptimisticLockException

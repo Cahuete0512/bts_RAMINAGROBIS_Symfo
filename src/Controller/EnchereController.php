@@ -39,9 +39,15 @@ class EnchereController extends AbstractController
             //je déclenche la requête
             $em->flush();
         }
+        $sessionRepo=$doctrine->getRepository(SessionEnchere::class);
+        $sessionEnchere=$sessionRepo->findOneByDate(new \DateTime());
 
-        return $this->render('enchere/index.html.twig', [
-            'data' => $apiService->getApiData(),
+        if($sessionEnchere==null){
+            return $this->redirectToRoute('app_enchere_innexistante');
+        }
+
+        return $this->render('enchere/enchere.html.twig', [
+            'data' => $apiService->getApiData($sessionEnchere->getIdPanier()),
             "formulaire"=> $form->createView()
         ]);
     }
