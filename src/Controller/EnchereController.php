@@ -8,6 +8,7 @@ use App\Entity\LignePanier;
 use App\Entity\SessionEnchere;
 use App\Form\EnchereType;
 use App\Service\ApiServiceGetEnchere;
+use App\Service\EmailService;
 use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,13 +19,32 @@ use Psr\Log\LoggerInterface;
 
 class EnchereController extends AbstractController
 {
+    //TODO:à retirer après fin d'utilisation
+    #[Route('/test', name: 'test')]
+    public function test(ApiServiceGetEnchere $apiService,
+                          Request $request,
+                          ManagerRegistry $doctrine,
+                          EmailService $emailService): Response
+    {
+        $fournisseur = new Fournisseur();
+        $fournisseur->setEmail("magalie.contant@epsi.fr");
+        $emailService->sendEmail($fournisseur);
+
+        return $this->render('enchere/enchere.html.twig', []);
+    }
+
+
+
     #[Route('/enchere', name: 'app_enchere')]
-    public function index(ApiServiceGetEnchere $apiService, Request $request, ManagerRegistry $doctrine): Response
+    public function index(ApiServiceGetEnchere $apiService,
+                          Request $request,
+                          ManagerRegistry $doctrine,
+                          EmailService $emailService): Response
     {
         //créer une enchere vide
         $enchere = new Enchere();
 
-        //Crééer le formulaire pour cette enchere
+        //Créer le formulaire pour cette enchere
         $form = $this->createForm(EnchereType::class, $enchere);
 
         $form->handleRequest($request);
@@ -33,27 +53,33 @@ class EnchereController extends AbstractController
             $em = $doctrine->getManager();
 
             $enchere->setDateEnchere(new \DateTime("now"));
-            //Je dis à l'entity manager que je veux enregistrer ma soirée
+            //Je dis à l'entity manager que je veux enregistrer mon enchere
             $em->persist($enchere);
 
             //je déclenche la requête
             $em->flush();
         }
-        $sessionRepo=$doctrine->getRepository(SessionEnchere::class);
-        $sessionEnchere=$sessionRepo->findOneByDate(new \DateTime());
 
-        if($sessionEnchere==null){
+        $lignePanierRepo=$doctrine->getRepository(LignePanier::class);
+        $lignesPaniers=$lignePanierRepo->findByFournisseur();
+
+        if($lignesPaniers==null){
             return $this->redirectToRoute('app_enchere_inexistante');
         }
 
         return $this->render('enchere/enchere.html.twig', [
-            'data' => $apiService->getApiData($sessionEnchere->getIdPanier()),
+            'data' => $lignesPaniers,
             "formulaire"=> $form->createView()
         ]);
     }
 
     #[Route('/lancerEnchere', name: 'app_lancer_enchere', methods: 'POST')]
-    public function lancerEnchere(LoggerInterface $logger, Request $request, ApiServiceGetEnchere $apiServiceGetEnchere, ManagerRegistry $doctrine): Response
+    public function lancerEnchere(
+                                LoggerInterface $logger,
+                                Request $request,
+                                ManagerRegistry $doctrine,
+                                ApiServiceGetEnchere $apiServiceGetEnchere,
+                                EmailService $emailService): Response
     {
         $logger->info($request->getContent());
 
@@ -96,6 +122,12 @@ class EnchereController extends AbstractController
 
         // TODO
         $logger->info('Envoie des emails ');
+        $fournisseurRepo = $doctrine->getRepository(Fournisseur::class);
+        $fournisseurs = $fournisseurRepo->findBy($sessionEnchere);
+
+        foreach ($fournisseurs as $fournisseur){
+            $emailService->sendEmail($fournisseur);
+        }
 
         return new Response("OK");
     }

@@ -32,10 +32,14 @@ class Fournisseur
     #[ORM\OneToMany(mappedBy: 'fournisseur', targetEntity: Enchere::class)]
     private $encheres;
 
+    #[ORM\ManyToOne(targetEntity: SessionEnchereFournisseur::class, inversedBy: 'fournisseur')]
+    private $sessionEnchereFournisseurs;
+
     public function __construct()
     {
         $this->encheres = new ArrayCollection();
         $this->lignePaniers = new ArrayCollection();
+        $this->sessionEnchereFournisseurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -150,6 +154,28 @@ class Fournisseur
             // set the owning side to null (unless already changed)
             if ($lignePanier->getFournisseur() === $this) {
                 $lignePanier->setFournisseur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addSessionEnchereFournisseur(SessionEnchereFournisseur $sessionEnchereFournisseur): self
+    {
+        if (!$this->sessionEnchereFournisseurs->contains($sessionEnchereFournisseur)) {
+            $this->sessionEnchereFournisseurs[] = $sessionEnchereFournisseur;
+            $sessionEnchereFournisseur->setFournisseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSessionEnchereFournisseur(SessionEnchereFournisseur $sessionEnchereFournisseur): self
+    {
+        if ($this->sessionEnchereFournisseurs->removeElement($sessionEnchereFournisseur)) {
+            // set the owning side to null (unless already changed)
+            if ($sessionEnchereFournisseur->getFournisseur() === $this) {
+                $sessionEnchereFournisseur->setFournisseur(null);
             }
         }
 

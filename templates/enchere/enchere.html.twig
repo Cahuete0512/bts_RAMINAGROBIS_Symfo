@@ -6,7 +6,7 @@
     <br><div class="app-bar pos-absolute bg-black z-2" >
     <div class="cell-md-4"><img width="100px" height="60px" src="{{ asset('logoCentrale.PNG')}}" style="position:center;top:-10px" alt="#"></div>
     <div class="cell-md-5 pos-fixed pos-top-right">
-        <h2 style ="color: #FFFFFF; text-align: left;">{{ data.numeroSemaine }} {{ data.annee }}</h2>
+        <h2 style ="color: #FFFFFF; text-align: left;">semaine n° {# { data.numeroSemaine }} / {{ data.annee }#}</h2>
     </div>
 </div>
     {{ form_start(formulaire, {'action': path('app_enchere'), 'method' : 'POST'}) }}

@@ -28,9 +28,13 @@ class SessionEnchere
     #[ORM\OneToMany(mappedBy: 'sessionEnchere', targetEntity: LignePanier::class, cascade: ['persist'])]
     private $lignePaniers;
 
+    #[ORM\ManyToOne(targetEntity: SessionEnchereFournisseur::class, inversedBy: 'sessionEnchere')]
+    private $sessionEnchereFournisseurs;
+
     public function __construct()
     {
         $this->lignePaniers = new ArrayCollection();
+        $this->sessionEnchereFournisseurs = new ArrayCollection();
     }
 
     /**
@@ -122,6 +126,28 @@ class SessionEnchere
             // set the owning side to null (unless already changed)
             if ($idLignePanier->getSessionEnchere() === $this) {
                 $idLignePanier->setSessionEnchere(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addSessionEnchereFournisseur(SessionEnchereFournisseur $sessionEnchereFournisseur): self
+    {
+        if (!$this->sessionEnchereFournisseurs->contains($sessionEnchereFournisseur)) {
+            $this->sessionEnchereFournisseurs[] = $sessionEnchereFournisseur;
+            $sessionEnchereFournisseur->setSessionEnchere($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSessionEnchereFournisseur(SessionEnchereFournisseur $sessionEnchereFournisseur): self
+    {
+        if ($this->sessionEnchereFournisseurs->removeElement($sessionEnchereFournisseur)) {
+            // set the owning side to null (unless already changed)
+            if ($sessionEnchereFournisseur->getSessionEnchere() === $this) {
+                $sessionEnchereFournisseur->setSessionEnchere(null);
             }
         }
 

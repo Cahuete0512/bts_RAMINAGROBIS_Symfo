@@ -45,22 +45,19 @@ class LignePanierRepository extends ServiceEntityRepository
         }
     }
 
-    // /**
-    //  * @return LignePanier[] Returns an array of LignePanier objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return LignePanier[] Returns an array of LignePanier objects
+     */
+    public function findByFournisseur($fournisseur)
     {
-        return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('l.id', 'ASC')
-            ->setMaxResults(10)
+        return $this->createQueryBuilder('lp')
+            ->andWhere(':fournisseur MEMBER OF lp.fournisseurs')
+            ->setParameter('fournisseur', $fournisseur)
+            ->orderBy('lp.reference', 'ASC')
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?LignePanier
