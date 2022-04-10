@@ -6,6 +6,7 @@ use App\Entity\Enchere;
 use App\Entity\Fournisseur;
 use App\Entity\LignePanier;
 use App\Entity\SessionEnchere;
+use App\Entity\SessionEnchereFournisseur;
 use App\Form\EnchereType;
 use App\Service\ApiServiceGetEnchere;
 use App\Service\EmailService;
@@ -59,16 +60,21 @@ class EnchereController extends AbstractController
             //je déclenche la requête
             $em->flush();
         }
+        // TODO voir comment on récupère le fournisseur (pour le moment on récupère un arbitrairement)
+        $fournisseurRepo=$doctrine->getRepository(Fournisseur::class);
+        $fournisseur = $fournisseurRepo->find(547);
 
         $lignePanierRepo=$doctrine->getRepository(LignePanier::class);
-        $lignesPaniers=$lignePanierRepo->findByFournisseur();
+        $lignesPaniers=$lignePanierRepo->findByFournisseur($fournisseur);
 
+        // TODO contrôle à revoir/compléter
         if($lignesPaniers==null){
             return $this->redirectToRoute('app_enchere_inexistante');
         }
 
         return $this->render('enchere/enchere.html.twig', [
-            'data' => $lignesPaniers,
+            'lignesPaniers' => $lignesPaniers,
+            'fournisseur' => $fournisseur,
             "formulaire"=> $form->createView()
         ]);
     }
@@ -99,6 +105,7 @@ class EnchereController extends AbstractController
         $sessionEnchere = new SessionEnchere();
 
         $sessionEnchere->setIdPanier($panier->id);
+        $sessionEnchere->setNumeroSemaine($panier->numeroSemaine);
         $sessionEnchere->setDebutEnchere(\DateTime::createFromFormat('d/m/Y H:i:s', $datas->debutPeriode));
         $sessionEnchere->setFinEnchere(\DateTime::createFromFormat('d/m/Y H:i:s', $datas->finPeriode));
 
@@ -114,19 +121,26 @@ class EnchereController extends AbstractController
                 $fournisseur = $fournisseurRepo->findOneBy(['societe' => $fournisseurRecu->societe]);
                 $fournisseur->getLignePaniers()->add($lignePanier);
                 $lignePanier->getFournisseurs()->add($fournisseur);
+
+                if(!$this->sessionEnchereFournisseurExists($sessionEnchere, $fournisseur)) {
+                    $sessionEnchereFournisseur = new SessionEnchereFournisseur();
+                    $sessionEnchereFournisseur->setSessionEnchere($sessionEnchere);
+                    $sessionEnchereFournisseur->setFournisseur($fournisseur);
+                    $sessionEnchereFournisseur->setCleConnexion(md5(rand()));
+                    $sessionEnchere->addSessionEnchereFournisseur($sessionEnchereFournisseur);
+                }
             }
         }
         $sessionEnchereRepo = $doctrine->getRepository(SessionEnchere::class);
         $sessionEnchereRepo->add($sessionEnchere);
 
 
-        // TODO
         $logger->info('Envoie des emails ');
         $fournisseurRepo = $doctrine->getRepository(Fournisseur::class);
-        $fournisseurs = $fournisseurRepo->findBy($sessionEnchere);
+        $fournisseurs = $fournisseurRepo->findBySessionEnchere($sessionEnchere);
 
         foreach ($fournisseurs as $fournisseur){
-            $emailService->sendEmail($fournisseur);
+            $emailService->sendEmail($fournisseur, $sessionEnchere);
         }
 
         return new Response("OK");
@@ -153,5 +167,15 @@ class EnchereController extends AbstractController
                 }
             }
         }
+    }
+
+    private function sessionEnchereFournisseurExists(SessionEnchere $sessionEnchere, Fournisseur $fournisseur)
+    {
+        foreach ($sessionEnchere->getSessionEnchereFournisseurs() as $sessionEnchereFournisseur){
+            if($sessionEnchereFournisseur->getFournisseur() === $fournisseur){
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -19,6 +19,9 @@ class SessionEnchere
     #[ORM\Column(type: 'integer')]
     private $idPanier;
 
+    #[ORM\Column(type: 'integer')]
+    private $numeroSemaine;
+
     #[ORM\Column(type: 'datetime')]
     private $debutEnchere;
 
@@ -28,7 +31,7 @@ class SessionEnchere
     #[ORM\OneToMany(mappedBy: 'sessionEnchere', targetEntity: LignePanier::class, cascade: ['persist'])]
     private $lignePaniers;
 
-    #[ORM\ManyToOne(targetEntity: SessionEnchereFournisseur::class, inversedBy: 'sessionEnchere')]
+    #[ORM\OneToMany(mappedBy: 'sessionEnchere', targetEntity: SessionEnchereFournisseur::class, cascade: ['persist'])]
     private $sessionEnchereFournisseurs;
 
     public function __construct()
@@ -60,6 +63,25 @@ class SessionEnchere
     public function setIdPanier(int $idPanier): self
     {
         $this->idPanier = $idPanier;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getNumeroSemaine(): ?int
+    {
+        return $this->numeroSemaine;
+    }
+
+    /**
+     * @param integer $numeroSemaine
+     * @return $this
+     */
+    public function setNumeroSemaine(int $numeroSemaine): self
+    {
+        $this->numeroSemaine = $numeroSemaine;
 
         return $this;
     }
@@ -130,6 +152,11 @@ class SessionEnchere
         }
 
         return $this;
+    }
+
+    public function getSessionEnchereFournisseurs(): Collection
+    {
+        return $this->sessionEnchereFournisseurs;
     }
 
     public function addSessionEnchereFournisseur(SessionEnchereFournisseur $sessionEnchereFournisseur): self

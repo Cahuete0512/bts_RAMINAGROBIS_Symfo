@@ -13,13 +13,13 @@ class SessionEnchereFournisseur
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $cleConnexion;
 
-    #[ORM\OneToMany(mappedBy: 'sessionEnchereFournisseur', targetEntity: Fournisseur::class)]
+    #[ORM\ManyToOne(targetEntity: Fournisseur::class, inversedBy: 'sessionEnchereFournisseurs')]
     private $fournisseur;
 
-    #[ORM\OneToMany(mappedBy: 'sessionEnchereFournisseur', targetEntity: SessionEnchere::class)]
+    #[ORM\ManyToOne(targetEntity: SessionEnchere::class, inversedBy: 'sessionEnchereFournisseurs')]
     private $sessionEnchere;
 
     public function getId(): ?int

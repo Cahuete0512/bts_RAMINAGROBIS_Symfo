@@ -45,22 +45,19 @@ class FournisseurRepository extends ServiceEntityRepository
         }
     }
 
-    // /**
-    //  * @return Fournisseur[] Returns an array of Fournisseur objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Fournisseur[] Returns an array of Fournisseur objects
+     */
+    public function findBySessionEnchere($sessionEnchere)
     {
         return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('f.id', 'ASC')
-            ->setMaxResults(10)
+            ->join('f.sessionEnchereFournisseurs', 'sef')
+            ->andWhere('sef.sessionEnchere = :sessionEnchere')
+            ->setParameter('sessionEnchere', $sessionEnchere)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?Fournisseur

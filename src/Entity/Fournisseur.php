@@ -6,7 +6,6 @@ use App\Repository\FournisseurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Integer;
 
 #[ORM\Entity(repositoryClass: FournisseurRepository::class)]
 class Fournisseur
@@ -22,9 +21,6 @@ class Fournisseur
     #[ORM\Column(type: 'string', length: 255)]
     private $email;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $numeroSession;
-
     #[ORM\ManyToMany(targetEntity: LignePanier::class, inversedBy: 'fournisseurs')]
     #[ORM\JoinColumn(nullable: false)]
     private $lignePaniers;
@@ -32,7 +28,7 @@ class Fournisseur
     #[ORM\OneToMany(mappedBy: 'fournisseur', targetEntity: Enchere::class)]
     private $encheres;
 
-    #[ORM\ManyToOne(targetEntity: SessionEnchereFournisseur::class, inversedBy: 'fournisseur')]
+    #[ORM\OneToMany(mappedBy: 'fournisseur', targetEntity: SessionEnchereFournisseur::class)]
     private $sessionEnchereFournisseurs;
 
     public function __construct()
@@ -81,24 +77,6 @@ class Fournisseur
     public function setEmail($email): self
     {
         $this->email = $email;
-
-        return $this;
-    }
-    /**
-     * @return int|null
-     */
-    public function getNumeroSession(): ?int
-    {
-        return $this->numeroSession;
-    }
-
-    /**
-     * @param mixed $numeroSession
-     * @return $this
-     */
-    public function setNumeroSession($numeroSession): self
-    {
-        $this->numeroSession = $numeroSession;
 
         return $this;
     }
@@ -158,6 +136,11 @@ class Fournisseur
         }
 
         return $this;
+    }
+
+    public function getSessionEnchereFournisseurs(): Collection
+    {
+        return $this->sessionEnchereFournisseurs;
     }
 
     public function addSessionEnchereFournisseur(SessionEnchereFournisseur $sessionEnchereFournisseur): self
