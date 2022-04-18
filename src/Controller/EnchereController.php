@@ -134,54 +134,64 @@ class EnchereController extends AbstractController
         $logger->info($datas->debutPeriode);
         $logger->info($datas->finPeriode);
 
-        $panier = $apiServiceGetEnchere->getApiData($datas->idPanier);
+        $sessionEnchereRepo = $doctrine->getRepository(SessionEnchere::class);
+        $panier = $sessionEnchereRepo->findOneBy(array('idPanier' => $datas->idPanier));
 
-        // on enregistre les fournisseurs
-        $fournisseurRepo = $doctrine->getRepository(Fournisseur::class);
-        $this->creerFournisseurs($panier, $fournisseurRepo, $logger);
+        if($panier === null) {
+            $logger->info("Création de la session d'enchère");
 
-        $sessionEnchere = new SessionEnchere();
+            $panier = $apiServiceGetEnchere->getApiData($datas->idPanier);
 
-        $sessionEnchere->setIdPanier($panier->id);
-        $sessionEnchere->setNumeroSemaine($panier->numeroSemaine);
-        $sessionEnchere->setDebutEnchere(\DateTime::createFromFormat('d/m/Y H:i:s', $datas->debutPeriode));
-        $sessionEnchere->setFinEnchere(\DateTime::createFromFormat('d/m/Y H:i:s', $datas->finPeriode));
+            // on enregistre les fournisseurs
+            $fournisseurRepo = $doctrine->getRepository(Fournisseur::class);
+            $this->creerFournisseurs($panier, $fournisseurRepo, $logger);
 
-        foreach ($panier->lignesPaniersGlobauxList as $lignePanierRecue){
-            $lignePanier = new LignePanier();
-            $sessionEnchere->getLignePaniers()->add($lignePanier);
-            $lignePanier->setQuantite($lignePanierRecue->quantite);
-            $lignePanier->setReference($lignePanierRecue->produit->reference);
-            $lignePanier->setSessionEnchere($sessionEnchere);
+            $sessionEnchere = new SessionEnchere();
 
-            foreach ($lignePanierRecue->produit->fournisseurListe as $fournisseurRecu){
-                // rechercher si le fournisseur existe en BDD, pour créer la relation
-                $fournisseur = $fournisseurRepo->findOneBy(['societe' => $fournisseurRecu->societe]);
-                $fournisseur->getLignePaniers()->add($lignePanier);
-                $lignePanier->getFournisseurs()->add($fournisseur);
+            $sessionEnchere->setIdPanier($panier->id);
+            $sessionEnchere->setNumeroSemaine($panier->numeroSemaine);
+            $sessionEnchere->setDebutEnchere(\DateTime::createFromFormat('d/m/Y H:i:s', $datas->debutPeriode));
+            $sessionEnchere->setFinEnchere(\DateTime::createFromFormat('d/m/Y H:i:s', $datas->finPeriode));
 
-                if(!$this->sessionEnchereFournisseurExists($sessionEnchere, $fournisseur)) {
-                    $sessionEnchereFournisseur = new SessionEnchereFournisseur();
-                    $sessionEnchereFournisseur->setSessionEnchere($sessionEnchere);
-                    $sessionEnchereFournisseur->setFournisseur($fournisseur);
-                    $sessionEnchereFournisseur->setCleConnexion(md5(rand()));
-                    $sessionEnchere->addSessionEnchereFournisseur($sessionEnchereFournisseur);
+            foreach ($panier->lignesPaniersGlobauxList as $lignePanierRecue) {
+                $lignePanier = new LignePanier();
+                $sessionEnchere->getLignePaniers()->add($lignePanier);
+                $lignePanier->setQuantite($lignePanierRecue->quantite);
+                $lignePanier->setReference($lignePanierRecue->produit->reference);
+                $lignePanier->setSessionEnchere($sessionEnchere);
+
+                foreach ($lignePanierRecue->produit->fournisseurListe as $fournisseurRecu) {
+                    // rechercher si le fournisseur existe en BDD, pour créer la relation
+                    $fournisseur = $fournisseurRepo->findOneBy(['societe' => $fournisseurRecu->societe]);
+                    $fournisseur->getLignePaniers()->add($lignePanier);
+                    $lignePanier->getFournisseurs()->add($fournisseur);
+
+                    if (!$this->sessionEnchereFournisseurExists($sessionEnchere, $fournisseur)) {
+                        $sessionEnchereFournisseur = new SessionEnchereFournisseur();
+                        $sessionEnchereFournisseur->setSessionEnchere($sessionEnchere);
+                        $sessionEnchereFournisseur->setFournisseur($fournisseur);
+                        $sessionEnchereFournisseur->setCleConnexion(md5(rand()));
+                        $sessionEnchere->addSessionEnchereFournisseur($sessionEnchereFournisseur);
+                    }
                 }
             }
+
+            $sessionEnchereRepo->add($sessionEnchere);
+
+
+            $logger->info('Envoie des emails ');
+            $fournisseurRepo = $doctrine->getRepository(Fournisseur::class);
+            $fournisseurs = $fournisseurRepo->findBySessionEnchere($sessionEnchere);
+
+            foreach ($fournisseurs as $fournisseur) {
+                $emailService->sendEmail($fournisseur, $sessionEnchere);
+            }
+        }else{
+            $logger->info("La session d'enchère existe déjà");
+            return new Response("Session déjà lancée", 410);
         }
-        $sessionEnchereRepo = $doctrine->getRepository(SessionEnchere::class);
-        $sessionEnchereRepo->add($sessionEnchere);
 
-
-        $logger->info('Envoie des emails ');
-        $fournisseurRepo = $doctrine->getRepository(Fournisseur::class);
-        $fournisseurs = $fournisseurRepo->findBySessionEnchere($sessionEnchere);
-
-        foreach ($fournisseurs as $fournisseur){
-            $emailService->sendEmail($fournisseur, $sessionEnchere);
-        }
-
-        return new Response("OK");
+        return new Response("OK", 200);
     }
 
     /**

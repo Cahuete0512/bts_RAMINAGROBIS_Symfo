@@ -17,9 +17,11 @@ class SessionEnchereFournisseur
     private $cleConnexion;
 
     #[ORM\ManyToOne(targetEntity: Fournisseur::class, inversedBy: 'sessionEnchereFournisseurs')]
+    #[ORM\JoinColumn(nullable: false)]
     private $fournisseur;
 
     #[ORM\ManyToOne(targetEntity: SessionEnchere::class, inversedBy: 'sessionEnchereFournisseurs')]
+    #[ORM\JoinColumn(nullable: false)]
     private $sessionEnchere;
 
     public function getId(): ?int

@@ -31,6 +31,26 @@ class LignePanier
     #[ORM\ManyToMany(targetEntity: Fournisseur::class, mappedBy: 'lignePaniers', cascade: ['persist'])]
     private $fournisseurs;
 
+    private $statutPrix;
+
+    /**
+     * @return string
+     */
+    public function getStatutPrix(): string
+    {
+        return $this->statutPrix;
+    }
+
+    /**
+     * @param mixed $statutPrix
+     */
+    public function setStatutPrix($statutPrix): self
+    {
+        $this->statutPrix = $statutPrix;
+
+        return $this;
+    }
+
     public function __construct()
     {
         $this->encheres = new ArrayCollection();
