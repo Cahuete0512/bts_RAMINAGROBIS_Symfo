@@ -3,7 +3,6 @@ namespace App\Service;
 
 use App\Entity\Fournisseur;
 use App\Entity\SessionEnchere;
-use App\Repository\SessionEnchereFournisseurRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;

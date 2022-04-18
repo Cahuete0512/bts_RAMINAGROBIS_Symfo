@@ -143,6 +143,13 @@ class Fournisseur
         return $this->sessionEnchereFournisseurs;
     }
 
+    public function setSessionEnchereFournisseurs(Collection $sessionsEncheresFournisseurs): self
+    {
+        $this->sessionEnchereFournisseurs = $sessionsEncheresFournisseurs;
+
+        return $this;
+    }
+
     public function addSessionEnchereFournisseur(SessionEnchereFournisseur $sessionEnchereFournisseur): self
     {
         if (!$this->sessionEnchereFournisseurs->contains($sessionEnchereFournisseur)) {
@@ -163,5 +170,22 @@ class Fournisseur
         }
 
         return $this;
+    }
+
+    /**
+     * récupère la session actuelle du fournisseur
+     * @return SessionEnchereFournisseur|null
+     */
+    public function getSessionEnchereFournisseurActuelle(): ?SessionEnchereFournisseur
+    {
+        foreach ($this->getSessionEnchereFournisseurs() as $sessionEnchereFournisseur){
+            $sessionEnchereFournisseur->getSessionEnchere();
+            $now = new \DateTime('now');
+            if($now >= $sessionEnchereFournisseur->getSessionEnchere()->getDebutEnchere()
+                && $now <= $sessionEnchereFournisseur->getSessionEnchere()->getFinEnchere()){
+                return $sessionEnchereFournisseur;
+            }
+        }
+        return null;
     }
 }

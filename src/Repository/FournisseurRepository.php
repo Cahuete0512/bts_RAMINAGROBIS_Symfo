@@ -59,6 +59,17 @@ class FournisseurRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findOneByCle($cle): ?Fournisseur
+    {
+        return $this->createQueryBuilder('f')
+            ->join('f.sessionEnchereFournisseurs', 'sef')
+            ->andWhere('sef.cleConnexion = :cle')
+            ->setParameter('cle', $cle)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
+
     /*
     public function findOneBySomeField($value): ?Fournisseur
     {

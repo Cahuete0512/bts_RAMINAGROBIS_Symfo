@@ -9,10 +9,12 @@ use App\Entity\SessionEnchere;
 use App\Entity\SessionEnchereFournisseur;
 use App\Form\EnchereType;
 use App\Service\ApiServiceGetEnchere;
+use App\Service\CookieService;
 use App\Service\EmailService;
 use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,9 +38,42 @@ class EnchereController extends AbstractController
 
 
 
+    #[Route('/enchere/{cle}', name: 'app_acces_enchere')]
+    public function accederEnchere($cle,
+                          Request $request,
+                          LoggerInterface $logger,
+                          ManagerRegistry $doctrine,
+                          CookieService $cookieService): Response
+    {
+
+        $fournisseurRepo=$doctrine->getRepository(Fournisseur::class);
+        $fournisseur = $fournisseurRepo->findOneByCle($cle);
+
+        if($fournisseur === null){
+            // TODO : faire une autre page d'erreur personnalisée pour session inexistante
+            return $this->redirectToRoute('app_enchere_inexistante');
+        }
+
+        if($request->cookies->get('cle') === null) {
+            $logger->info("création du cookie pour la session d'enchere");
+            $sessionEnchereFournisseur = $fournisseur->getSessionEnchereFournisseurActuelle();
+            $cookie = new Cookie('cle', $sessionEnchereFournisseur->getCleConnexion(), $sessionEnchereFournisseur->getSessionEnchere()->getFinEnchere());
+            $res = new Response();
+            $res->headers->setCookie($cookie);
+            $res->send();
+        }else{
+            $logger->debug("Cookie pour la session d'enchere déjà existant");
+        }
+
+        return $this->redirectToRoute('app_enchere');
+    }
+
+
+
     #[Route('/enchere', name: 'app_enchere')]
     public function index(ApiServiceGetEnchere $apiService,
                           Request $request,
+                          LoggerInterface $logger,
                           ManagerRegistry $doctrine,
                           EmailService $emailService): Response
     {
@@ -60,15 +95,18 @@ class EnchereController extends AbstractController
             //je déclenche la requête
             $em->flush();
         }
-        // TODO voir comment on récupère le fournisseur (pour le moment on récupère un arbitrairement)
+
+        $cookie = $request->cookies->get('cle');
+        $logger->info('cle : ' . $cookie);
+
         $fournisseurRepo=$doctrine->getRepository(Fournisseur::class);
-        $fournisseur = $fournisseurRepo->find(547);
+        $fournisseur = $fournisseurRepo->findOneByCle($cookie);
 
         $lignePanierRepo=$doctrine->getRepository(LignePanier::class);
         $lignesPaniers=$lignePanierRepo->findByFournisseur($fournisseur);
 
-        // TODO contrôle à revoir/compléter
         if($lignesPaniers==null){
+            $logger->info("Aucune enchere trouvée");
             return $this->redirectToRoute('app_enchere_inexistante');
         }
 

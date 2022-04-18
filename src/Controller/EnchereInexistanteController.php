@@ -8,12 +8,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class EnchereInexistanteController extends AbstractController
 {
-    #[Route('/enchere/inexistante', name: 'app_enchere_inexistante')]
+    #[Route('/enchere_inexistante', name: 'app_enchere_inexistante')]
     public function index(): Response
     {
 
-        return $this->render('enchere_inexistante/enchereInexistante.html.twig', [
-            'controller_name' => 'EnchereInexistanteController',
-        ]);
+        return $this->render('enchere_inexistante/enchereInexistante.html.twig');
     }
 }
