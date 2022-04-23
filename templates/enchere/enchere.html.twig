@@ -9,7 +9,6 @@
         <h2 style ="color: #FFFFFF; text-align: left;">{{ fournisseur.societe }}</h2>
     </div>
 </div>
-    {{ form_start(formulaire, {'action': path('app_enchere'), 'method' : 'POST'}) }}
     <div class="table table-border cell-border"><br>
         <p><table class="table table-border cell-border">
             <thead>
@@ -29,48 +28,17 @@
                     <td>{{ lignePanier.reference }}</td>
                     <td>{{ lignePanier.quantite }}</td>
                     <td>
-                        <label style="height: 30px; width: 200px;">
-
-                        </label>
+                        {%  set prix = 0 %}
+                        {%  if lignePanier.encheres is not empty %}
+                            {%  set prix = lignePanier.encheres[0].prixEnchere %}
+                        {% endif %}
+                        <input id="lignePanier_{{ loop.index0 }}" type="number" value="{{ prix }}"/>
+                        <button type="button" onclick="">valider</button>
                     </td>
-                    <td>Pastille</td>
+                    <td><div class="cercle_vert">wxcwc</div></td>
                 </tr>
             {%  endfor  %}
-            <tr>
-                <td>Reference</td>
-                <td>Quantité de produits</td>
-                <td>
-                    <label style="height: 30px; width: 200px;">
-                        {{ form_errors(formulaire.prix_enchere) }}
-                        {{ form_widget(formulaire.prix_enchere) }}
-
-                    </label>
-                </td>
-                <td>Pastille</td>
-            </tr>
-            <tr>
-                <td>Reference</td>
-                <td>Quantité de produits</td>
-                <td>
-                    <label>
-                        <input type="text" value="Nouveau prix" style="height: 30px; width: 200px;">
-                    </label>
-                </td>
-                <td>Pastille</td>
-            </tr>
-            <tr>
-                <td>Reference</td>
-                <td>Quantité de produits</td>
-                <td>
-                    <label>
-                        <input type="text" value="Nouveau prix" style="height: 30px; width: 200px;">
-                    </label>
-                </td>
-                <td>Pastille</td>
-            </tr>
             </tbody>
         </table>
-        {{ form_rest (formulaire) }}
-        {{ form_end(formulaire) }}
     </div>
 {% endblock %}

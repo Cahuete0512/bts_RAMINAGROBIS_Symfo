@@ -1,5 +1,26 @@
 @import "node_modules/metro4";
 
 body {
-  background-color: white;
+  background-color: red;
+}
+
+.cercle_vert {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: green;
+}
+
+.cercle_rouge {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: red;
+}
+
+.cercle_orange {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: orange;
 }

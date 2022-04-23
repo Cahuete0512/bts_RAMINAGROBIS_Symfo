@@ -8,6 +8,7 @@ use App\Entity\LignePanier;
 use App\Entity\SessionEnchere;
 use App\Entity\SessionEnchereFournisseur;
 use App\Form\EnchereType;
+use App\Form\SessionEnchereType;
 use App\Service\ApiServiceGetEnchere;
 use App\Service\CookieService;
 use App\Service\EmailService;
@@ -50,13 +51,20 @@ class EnchereController extends AbstractController
         $fournisseur = $fournisseurRepo->findOneByCle($cle);
 
         if($fournisseur === null){
+            $logger->info("Aucun fournisseur trouvé");
+            // TODO : faire une autre page d'erreur personnalisée pour session inexistante
+            return $this->redirectToRoute('app_enchere_inexistante');
+        }
+
+        $sessionEnchereFournisseur = $fournisseur->getSessionEnchereFournisseurActuelle();
+        if($sessionEnchereFournisseur === null){
+            $logger->info("Aucune session d'enchere trouvée");
             // TODO : faire une autre page d'erreur personnalisée pour session inexistante
             return $this->redirectToRoute('app_enchere_inexistante');
         }
 
         if($request->cookies->get('cle') === null) {
             $logger->info("création du cookie pour la session d'enchere");
-            $sessionEnchereFournisseur = $fournisseur->getSessionEnchereFournisseurActuelle();
             $cookie = new Cookie('cle', $sessionEnchereFournisseur->getCleConnexion(), $sessionEnchereFournisseur->getSessionEnchere()->getFinEnchere());
             $res = new Response();
             $res->headers->setCookie($cookie);
@@ -71,31 +79,10 @@ class EnchereController extends AbstractController
 
 
     #[Route('/enchere', name: 'app_enchere')]
-    public function index(ApiServiceGetEnchere $apiService,
-                          Request $request,
+    public function index(Request $request,
                           LoggerInterface $logger,
-                          ManagerRegistry $doctrine,
-                          EmailService $emailService): Response
+                          ManagerRegistry $doctrine): Response
     {
-        //créer une enchere vide
-        $enchere = new Enchere();
-
-        //Créer le formulaire pour cette enchere
-        $form = $this->createForm(EnchereType::class, $enchere);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()){
-            //On récupère l'entity manager
-            $em = $doctrine->getManager();
-
-            $enchere->setDateEnchere(new \DateTime("now"));
-            //Je dis à l'entity manager que je veux enregistrer mon enchere
-            $em->persist($enchere);
-
-            //je déclenche la requête
-            $em->flush();
-        }
-
         $cookie = $request->cookies->get('cle');
         $logger->info('cle : ' . $cookie);
 
@@ -106,14 +93,13 @@ class EnchereController extends AbstractController
         $lignesPaniers=$lignePanierRepo->findByFournisseur($fournisseur);
 
         if($lignesPaniers==null){
-            $logger->info("Aucune enchere trouvée");
+            $logger->info("Aucune ligne de panier trouvée");
             return $this->redirectToRoute('app_enchere_inexistante');
         }
 
         return $this->render('enchere/enchere.html.twig', [
             'lignesPaniers' => $lignesPaniers,
-            'fournisseur' => $fournisseur,
-            "formulaire"=> $form->createView()
+            'fournisseur' => $fournisseur
         ]);
     }
 
