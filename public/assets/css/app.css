@@ -1,7 +1,5 @@
-@import "../../../node_modules/metro4";
-
 body {
-  background-color: red;
+  background-color: white;
 }
 
 .cercle_vert {

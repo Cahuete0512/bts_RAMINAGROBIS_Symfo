@@ -32,18 +32,6 @@ class Enchere
         return $this->id;
     }
 
-    public function getNumeroPanier(): ?int
-    {
-        return $this->numeroPanier;
-    }
-
-    public function setNumeroPanier(int $numeroPanier): self
-    {
-        $this->numeroPanier = $numeroPanier;
-
-        return $this;
-    }
-
     public function getDateEnchere(): ?\DateTimeInterface
     {
         return $this->dateEnchere;

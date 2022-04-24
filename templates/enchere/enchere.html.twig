@@ -30,17 +30,18 @@
                     <td>
                         {%  set prix = 0 %}
                         {%  if lignePanier.encheres is not empty %}
-                            {%  set prix = lignePanier.encheres[0].prixEnchere %}
+                            {%  set prix = lignePanier.encheres[lignePanier.encheres|length-1].prixEnchere %}
                         {% endif %}
                         <div class="enchere">
-                            <input class="w-50" id="lignePanier_{{ loop.index0 }}" type="number" data-role="input" data-prepend="Saissez votre nouvelle enchère: " value="{{ prix }} ">
-                            <button class="button success outline small rounded" style="float: right" onclick="">valider</button>
+                            <input class="w-50" id="lignePanier_{{ lignePanier.id }}" type="number" data-role="input" data-prepend="Saissez votre nouvelle enchère: " data-default-value="{{ prix }} "/>
+                            <button id="valider_{{ lignePanier.id }}" class="button success outline small rounded btnEnchere" style="float: right" >valider</button>
                         </div>
                     </td>
-                    <td><div class="cercle_vert">wxcwc</div></td>
+                    <td><div class="cercle_vert"></div></td>
                 </tr>
             {%  endfor  %}
             </tbody>
         </table>
     </div>
+    <script src="{{ asset('assets/js/enchere.js') }}"></script>
 {% endblock %}

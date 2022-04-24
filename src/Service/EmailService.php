@@ -40,14 +40,14 @@ class EmailService
 
         $cle = $this->getCleSession($fournisseur, $sessionEnchere);
 
-        $url = $this->router->generate('app_enchere', [], urlGeneratorInterface::ABSOLUTE_URL);
+        $url = $this->router->generate('app_acces_enchere', ['cle' => $cle], urlGeneratorInterface::ABSOLUTE_URL);
 
         $email = (new Email())
             ->from('ramine.agrobis@gmail.com')
             ->to($fournisseur->getEmail())
             ->subject('Time for Symfony Mailer!')
             ->text('Sending emails is fun again!')
-            ->html("<p>lien pour l'enchere : $url/$cle</p>");
+            ->html("<p>lien pour l'enchere : $url</p>");
 
         $this->mailer->send($email);
 

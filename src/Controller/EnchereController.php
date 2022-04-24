@@ -16,6 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,25 +24,14 @@ use Psr\Log\LoggerInterface;
 
 class EnchereController extends AbstractController
 {
-    //TODO:à retirer après fin d'utilisation
-    /**
-     * @param ApiServiceGetEnchere $apiService
-     * @param Request $request
-     * @param ManagerRegistry $doctrine
-     * @param EmailService $emailService
-     * @return Response
-     */
-    #[Route('/test', name: 'test')]
+
+    #[Route('/', name: 'index')]
     public function test(ApiServiceGetEnchere $apiService,
                           Request $request,
                           ManagerRegistry $doctrine,
                           EmailService $emailService): Response
     {
-        $fournisseur = new Fournisseur();
-        $fournisseur->setEmail("magalie.contant@epsi.fr");
-        $emailService->sendEmail($fournisseur);
-
-        return $this->render('enchere/enchere.html.twig', []);
+        return $this->redirectToRoute('app_enchere');
     }
 
     /**
@@ -52,7 +42,7 @@ class EnchereController extends AbstractController
      * @param CookieService $cookieService
      * @return Response
      */
-    #[Route('/enchere/{cle}', name: 'app_acces_enchere')]
+    #[Route('/enchere/access/{cle}', name: 'app_acces_enchere')]
     public function accederEnchere($cle,
                           Request $request,
                           LoggerInterface $logger,
@@ -239,5 +229,34 @@ class EnchereController extends AbstractController
             }
         }
         return false;
+    }
+
+
+    #[Route('/enchere/ajouter', name: 'ajouter_enchere', methods: 'POST')]
+    public function ajouterEnchere(Request $request,
+                                   ManagerRegistry $doctrine,
+                                   LoggerInterface $logger): JsonResponse
+    {
+        $cookie = $request->cookies->get('cle');
+        $data = json_decode($request->getContent());
+
+        $logger->info('cle : ' . $cookie);
+
+        $fournisseurRepo=$doctrine->getRepository(Fournisseur::class);
+        $fournisseur = $fournisseurRepo->findOneByCle($cookie);
+
+        $lignePanierRepo = $doctrine->getRepository(LignePanier::class);
+        $lignePanier = $lignePanierRepo->find($data->idLigne);
+
+        $enchere = new Enchere();
+        $enchere->setDateEnchere(new \DateTime('now'));
+        $enchere->setFournisseur($fournisseur);
+        $enchere->setLignePanier($lignePanier);
+        $enchere->setPrixEnchere($data->prix);
+
+        $enchereRepo = $doctrine->getRepository(Enchere::class);
+        $enchereRepo->add($enchere);
+
+        return new JsonResponse("{'message': 'c'est OK'}", Response::HTTP_OK);
     }
 }
