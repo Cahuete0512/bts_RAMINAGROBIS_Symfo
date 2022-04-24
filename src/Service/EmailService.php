@@ -16,6 +16,11 @@ class EmailService
     private $router;
     private $doctrine;
 
+    /**
+     * @param MailerInterface $mailer
+     * @param RouterInterface $router
+     * @param ManagerRegistry $doctrine
+     */
     public function __construct(MailerInterface $mailer,
                                 RouterInterface $router,
                                 ManagerRegistry $doctrine)
@@ -25,6 +30,11 @@ class EmailService
         $this->doctrine = $doctrine;
     }
 
+    /**
+     * @param Fournisseur $fournisseur
+     * @param SessionEnchere $sessionEnchere
+     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     */
     public function sendEmail(Fournisseur $fournisseur, SessionEnchere $sessionEnchere)
     {
 
@@ -43,7 +53,11 @@ class EmailService
 
     }
 
-
+    /**
+     * @param Fournisseur $fournisseur
+     * @param SessionEnchere $sessionEnchere
+     * @return string|null
+     */
     private function getCleSession(Fournisseur $fournisseur, SessionEnchere $sessionEnchere): ?string
     {
         foreach ($sessionEnchere->getSessionEnchereFournisseurs() as $sessionEnchereFournisseur){

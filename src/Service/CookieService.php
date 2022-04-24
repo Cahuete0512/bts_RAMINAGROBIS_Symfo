@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 class CookieService
 {
+    /**
+     * @param Fournisseur $fournisseur
+     */
     public function createCookie(Fournisseur $fournisseur)
     {
         $sessionEnchereFournisseur = $this->getSessionEnchereFournisseurActuel($fournisseur);
@@ -18,6 +21,10 @@ class CookieService
                               $sessionEnchereFournisseur->getSessionEnchere()->getFinEnchere());
     }
 
+    /**
+     * @param Fournisseur $fournisseur
+     * @return SessionEnchereFournisseur|null
+     */
     private function getSessionEnchereFournisseurActuel(Fournisseur $fournisseur): ?SessionEnchereFournisseur
     {
         foreach ($fournisseur->getSessionEnchereFournisseurs() as $sessionEnchereFournisseur){

@@ -16,6 +16,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SessionEnchereRepository extends ServiceEntityRepository
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SessionEnchere::class);
@@ -33,6 +36,11 @@ class SessionEnchereRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @param $date
+     * @return SessionEnchere|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function findOneByDate($date): ?SessionEnchere
     {
         return $this->createQueryBuilder('enchere')

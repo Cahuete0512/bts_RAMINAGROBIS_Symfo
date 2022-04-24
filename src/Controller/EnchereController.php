@@ -24,6 +24,13 @@ use Psr\Log\LoggerInterface;
 class EnchereController extends AbstractController
 {
     //TODO:à retirer après fin d'utilisation
+    /**
+     * @param ApiServiceGetEnchere $apiService
+     * @param Request $request
+     * @param ManagerRegistry $doctrine
+     * @param EmailService $emailService
+     * @return Response
+     */
     #[Route('/test', name: 'test')]
     public function test(ApiServiceGetEnchere $apiService,
                           Request $request,
@@ -37,8 +44,14 @@ class EnchereController extends AbstractController
         return $this->render('enchere/enchere.html.twig', []);
     }
 
-
-
+    /**
+     * @param $cle
+     * @param Request $request
+     * @param LoggerInterface $logger
+     * @param ManagerRegistry $doctrine
+     * @param CookieService $cookieService
+     * @return Response
+     */
     #[Route('/enchere/{cle}', name: 'app_acces_enchere')]
     public function accederEnchere($cle,
                           Request $request,
@@ -52,15 +65,14 @@ class EnchereController extends AbstractController
 
         if($fournisseur === null){
             $logger->info("Aucun fournisseur trouvé");
-            // TODO : faire une autre page d'erreur personnalisée pour session inexistante
-            return $this->redirectToRoute('app_enchere_inexistante');
+            return $this->redirectToRoute('app_fournisseur_inexistant');
         }
 
         $sessionEnchereFournisseur = $fournisseur->getSessionEnchereFournisseurActuelle();
         if($sessionEnchereFournisseur === null){
             $logger->info("Aucune session d'enchere trouvée");
             // TODO : faire une autre page d'erreur personnalisée pour session inexistante
-            return $this->redirectToRoute('app_enchere_inexistante');
+            return $this->redirectToRoute('app_session_enchere_inexistante');
         }
 
         if($request->cookies->get('cle') === null) {
@@ -76,8 +88,12 @@ class EnchereController extends AbstractController
         return $this->redirectToRoute('app_enchere');
     }
 
-
-
+    /**
+     * @param Request $request
+     * @param LoggerInterface $logger
+     * @param ManagerRegistry $doctrine
+     * @return Response
+     */
     #[Route('/enchere', name: 'app_enchere')]
     public function index(Request $request,
                           LoggerInterface $logger,
@@ -103,6 +119,14 @@ class EnchereController extends AbstractController
         ]);
     }
 
+    /**
+     * @param LoggerInterface $logger
+     * @param Request $request
+     * @param ManagerRegistry $doctrine
+     * @param ApiServiceGetEnchere $apiServiceGetEnchere
+     * @param EmailService $emailService
+     * @return Response
+     */
     #[Route('/lancerEnchere', name: 'app_lancer_enchere', methods: 'POST')]
     public function lancerEnchere(
                                 LoggerInterface $logger,
@@ -203,6 +227,11 @@ class EnchereController extends AbstractController
         }
     }
 
+    /**
+     * @param SessionEnchere $sessionEnchere
+     * @param Fournisseur $fournisseur
+     * @return bool
+     */
     private function sessionEnchereFournisseurExists(SessionEnchere $sessionEnchere, Fournisseur $fournisseur)
     {
         foreach ($sessionEnchere->getSessionEnchereFournisseurs() as $sessionEnchereFournisseur){

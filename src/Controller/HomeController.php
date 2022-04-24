@@ -9,12 +9,16 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    #[Route('/', name: 'home')]
+    /**
+     * @param ApiServiceGetEnchere $apiServiceGetEnchere
+     * @return Response
+     */
+    #[Route('/', name: 'enchere')]
     public function index(ApiServiceGetEnchere $apiServiceGetEnchere): Response
     {
 
-        return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
+        return $this->render('enchere/enchere.html.twig', [
+            'controller_name' => 'EncherController',
         ]);
     }
 }

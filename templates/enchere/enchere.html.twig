@@ -32,8 +32,10 @@
                         {%  if lignePanier.encheres is not empty %}
                             {%  set prix = lignePanier.encheres[0].prixEnchere %}
                         {% endif %}
-                        <input id="lignePanier_{{ loop.index0 }}" type="number" value="{{ prix }}"/>
-                        <button type="button" onclick="">valider</button>
+                        <div class="enchere">
+                            <input id="lignePanier_{{ loop.index0 }}" type="number" value="{{ prix }}">
+                            <button class="button success outline small rounded" style="float: right" onclick="">valider</button>
+                        </div>
                     </td>
                     <td><div class="cercle_vert">wxcwc</div></td>
                 </tr>
