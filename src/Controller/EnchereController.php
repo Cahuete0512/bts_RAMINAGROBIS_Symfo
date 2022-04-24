@@ -71,7 +71,6 @@ class EnchereController extends AbstractController
         $sessionEnchereFournisseur = $fournisseur->getSessionEnchereFournisseurActuelle();
         if($sessionEnchereFournisseur === null){
             $logger->info("Aucune session d'enchere trouvée");
-            // TODO : faire une autre page d'erreur personnalisée pour session inexistante
             return $this->redirectToRoute('app_session_enchere_inexistante');
         }
 

@@ -9,16 +9,16 @@
         <h2 style ="color: #FFFFFF; text-align: left;">{{ fournisseur.societe }}</h2>
     </div>
 </div>
-    <div class="table table-border cell-border"><br>
-        <p><table class="table table-border cell-border">
+    <div class="table striped table-border cell-border"><br>
+        <p><table class="table table-border cell-border row-hover">
             <thead>
             <tr>
-                <th colspan="2"><strong>Liste des Produits</strong>
-                    <label>
-                        <input type="text" value="recherche produits" style="height: 30px; width: 200px; float:right;">
-                    </label>
-                </th>
-                <th><strong>Proposition Nouveau Prix</strong></th>
+                <label>
+                    <input type="text" value="recherche produits" class="w-50" style="height: 30px; width: 200px; float:right;" data-role="input" data-search-button="true">
+                </label>
+                <th><strong>Liste des Produits</strong></th>
+                <th><strong>Quantité</strong></th>
+                <th><strong>Enchere</strong></th>
                 <th><strong>Votre Position</strong></th>
             </tr>
             </thead>
@@ -33,7 +33,7 @@
                             {%  set prix = lignePanier.encheres[0].prixEnchere %}
                         {% endif %}
                         <div class="enchere">
-                            <input id="lignePanier_{{ loop.index0 }}" type="number" value="{{ prix }}">
+                            <input class="w-50" id="lignePanier_{{ loop.index0 }}" type="number" data-role="input" data-prepend="Saissez votre nouvelle enchère: " value="{{ prix }} ">
                             <button class="button success outline small rounded" style="float: right" onclick="">valider</button>
                         </div>
                     </td>
