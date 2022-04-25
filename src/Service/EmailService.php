@@ -42,12 +42,13 @@ class EmailService
 
         $url = $this->router->generate('app_acces_enchere', ['cle' => $cle], urlGeneratorInterface::ABSOLUTE_URL);
 
+        $num = $sessionEnchere->getNumeroSemaine();
         $email = (new Email())
             ->from('ramine.agrobis@gmail.com')
             ->to($fournisseur->getEmail())
-            ->subject('Time for Symfony Mailer!')
+            ->subject('Votre session d enchere est ouverte!')
             ->text('Sending emails is fun again!')
-            ->html("<p>lien pour l'enchere : $url</p>");
+            ->html("<p>lien pour l'enchere : $url pour la semaine : $num</p>");
 
         $this->mailer->send($email);
 
@@ -68,5 +69,4 @@ class EmailService
 
         return null;
     }
-
 }
