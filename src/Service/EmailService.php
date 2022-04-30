@@ -14,20 +14,16 @@ class EmailService
 
     private $mailer;
     private $router;
-    private $doctrine;
 
     /**
      * @param MailerInterface $mailer
      * @param RouterInterface $router
-     * @param ManagerRegistry $doctrine
      */
     public function __construct(MailerInterface $mailer,
-                                RouterInterface $router,
-                                ManagerRegistry $doctrine)
+                                RouterInterface $router)
     {
         $this->mailer = $mailer;
         $this->router = $router;
-        $this->doctrine = $doctrine;
     }
 
     /**

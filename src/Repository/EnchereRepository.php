@@ -45,6 +45,40 @@ class EnchereRepository extends ServiceEntityRepository
         }
     }
 
+    public function updateStatut(): void
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = 'update enchere set position = -1';
+        $stmt = $conn->prepare($sql);
+        $stmt->executeQuery();
+        $this->_em->flush();
+
+        $sql = 'update enchere set position = 1 where id in (
+                        select e1.id
+                        from enchere e1
+                        where prix_enchere = (select max(prix_enchere) from enchere e2 where e2.ligne_panier_id = e1.ligne_panier_id)
+                    )';
+        $stmt = $conn->prepare($sql);
+        $stmt->executeQuery();
+        $this->_em->flush();
+
+        $sql = 'update enchere set position = 0 where id in (
+                        select e1.id
+                        from enchere e1
+                        where prix_enchere = (select max(prix_enchere) from enchere e2 where e2.ligne_panier_id = e1.ligne_panier_id)
+                          and (select count(*)
+                               from enchere e3
+                               where e3.ligne_panier_id = e1.ligne_panier_id
+                                 and prix_enchere = (
+                                   select max(prix_enchere)
+                                   from enchere e2
+                                   where e2.ligne_panier_id = e1.ligne_panier_id)) > 1
+                        )';
+        $stmt = $conn->prepare($sql);
+        $stmt->executeQuery();
+        $this->_em->flush();
+    }
+
     // /**
     //  * @return Enchere[] Returns an array of Enchere objects
     //  */

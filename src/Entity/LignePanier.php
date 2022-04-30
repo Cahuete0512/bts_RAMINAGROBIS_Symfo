@@ -25,7 +25,7 @@ class LignePanier
     #[ORM\JoinColumn(nullable: false)]
     private $sessionEnchere;
 
-    #[ORM\OneToMany(mappedBy: 'lignePanier', targetEntity: Enchere::class)]
+    #[ORM\OneToMany(mappedBy: 'lignePanier', targetEntity: Enchere::class, fetch: "EAGER")]
     private $encheres;
 
     #[ORM\ManyToMany(targetEntity: Fournisseur::class, mappedBy: 'lignePaniers', cascade: ['persist'])]

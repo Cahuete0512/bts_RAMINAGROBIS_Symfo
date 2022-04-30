@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query\Expr;
 
 /**
  * @method LignePanier|null find($id, $lockMode = null, $lockVersion = null)
@@ -51,10 +52,11 @@ class LignePanierRepository extends ServiceEntityRepository
     public function findByFournisseur($fournisseur)
     {
         return $this->createQueryBuilder('lp')
+            ->addSelect(['e'])
             ->join('lp.fournisseurs', 'f')
             ->join('f.sessionEnchereFournisseurs', 'sef')
             ->join('sef.sessionEnchere', 'se')
-            ->leftJoin('f.encheres', 'e')
+            ->leftJoin('lp.encheres', 'e', Expr\Join::WITH, 'e.fournisseur = :fournisseur')
             ->andWhere('f = :fournisseur')
             ->andWhere('se.debutEnchere <= :now')
             ->andWhere('se.finEnchere >= :now')
@@ -63,6 +65,7 @@ class LignePanierRepository extends ServiceEntityRepository
             ->orderBy('lp.reference', 'ASC')
             ->addOrderBy('e.id', 'DESC')
             ->getQuery()
+            ->setFetchMode('LignePanier', 'encheres', \Doctrine\ORM\Mapping\ClassMetadata::FETCH_EAGER)
             ->getResult()
         ;
     }

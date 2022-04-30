@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Psr\Log\LoggerInterface;
+use function PHPUnit\Framework\throwException;
 
 class EnchereController extends AbstractController
 {
@@ -101,6 +102,7 @@ class EnchereController extends AbstractController
             $logger->info("Aucune ligne de panier trouvée");
             return $this->redirectToRoute('app_enchere_inexistante');
         }
+
 
         return $this->render('enchere/enchere.html.twig', [
             'lignesPaniers' => $lignesPaniers,
@@ -231,22 +233,33 @@ class EnchereController extends AbstractController
         return false;
     }
 
-
+    /**
+     * @param Request $request
+     * @param ManagerRegistry $doctrine
+     * @param LoggerInterface $logger
+     * @return JsonResponse
+     */
     #[Route('/enchere/ajouter', name: 'ajouter_enchere', methods: 'POST')]
     public function ajouterEnchere(Request $request,
                                    ManagerRegistry $doctrine,
                                    LoggerInterface $logger): JsonResponse
     {
+        $enchereRepo = $doctrine->getRepository(Enchere::class);
+        $lignePanierRepo = $doctrine->getRepository(LignePanier::class);
+        $fournisseurRepo = $doctrine->getRepository(Fournisseur::class);
+
         $cookie = $request->cookies->get('cle');
         $data = json_decode($request->getContent());
 
         $logger->info('cle : ' . $cookie);
 
-        $fournisseurRepo=$doctrine->getRepository(Fournisseur::class);
         $fournisseur = $fournisseurRepo->findOneByCle($cookie);
-
-        $lignePanierRepo = $doctrine->getRepository(LignePanier::class);
         $lignePanier = $lignePanierRepo->find($data->idLigne);
+
+        $derniereEnchereFournisseur = $enchereRepo->findOneBy(["fournisseur" => $fournisseur->getId(), "lignePanier" => $lignePanier->getId()], ["dateEnchere" => "ASC"]);
+        if($derniereEnchereFournisseur != null && $derniereEnchereFournisseur->getPrixEnchere() >=  $data->prix){
+            return new JsonResponse("{\"erreur\": \"Veuillez encherir une valeur plus élevée que votre dernier prix\"}", Response::HTTP_FORBIDDEN);
+        }
 
         $enchere = new Enchere();
         $enchere->setDateEnchere(new \DateTime('now'));
@@ -254,10 +267,10 @@ class EnchereController extends AbstractController
         $enchere->setLignePanier($lignePanier);
         $enchere->setPrixEnchere($data->prix);
 
-        $enchereRepo = $doctrine->getRepository(Enchere::class);
         $enchereRepo->add($enchere);
+        $doctrine->getManager()->flush();
 
-        $position = $this->comparerEnchere($enchere, $data->idLigne, $doctrine);
+        $position = $this->comparerEnchere($enchere, $data->idLigne, $doctrine, $logger);
         $couleur= 'cercle_orange';
         if ($position == -1){
             $logger->info('enchere insuffisante');
@@ -270,7 +283,14 @@ class EnchereController extends AbstractController
         return new JsonResponse("{\"idLignePanier\":$data->idLigne,\"couleur\": \"$couleur\"}", Response::HTTP_OK);
     }
 
-    private function comparerEnchere($monEnchere, $idLignePanier, ManagerRegistry $doctrine){
+    /**
+     * @param $monEnchere
+     * @param $idLignePanier
+     * @param ManagerRegistry $doctrine
+     * @return int
+     */
+    private function comparerEnchere($monEnchere, $idLignePanier, ManagerRegistry $doctrine,
+                                     LoggerInterface $logger){
         $lignePanierRepo = $doctrine->getRepository(LignePanier::class);
         $lignePanier = $lignePanierRepo->find($idLignePanier);
 
@@ -280,20 +300,17 @@ class EnchereController extends AbstractController
         foreach ($lignePanier->getEncheres() as $enchere){
             if($monEnchere->getPrixEnchere() < $enchere->getPrixEnchere()){
                 $resultat = -1;
-
                 break;
             }elseif ($monEnchere->getPrixEnchere() == $enchere->getPrixEnchere()){
+                $logger->info('count++');
                 $count ++;
             }
         }
 
-        if($resultat != -1 && $count == 1){
+        $logger->info('count : '.$count);
+        if($resultat == 0 && $count == 0){
             $resultat = 1;
         }
         return $resultat;
-        // TODO : chercher en base toutes les enchères pour la session et le produit
-        // TODO : faire algo pour recup dans une liste les encheres avec les montant le plus important
-        // TODO : faire requête php pour aller chercher le prix d enchere max
-
     }
 }

@@ -19,6 +19,9 @@ class Enchere
     #[ORM\Column(type: 'float')]
     private $prixEnchere;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $position;
+
     #[ORM\ManyToOne(targetEntity: LignePanier::class, inversedBy: 'encheres')]
     #[ORM\JoinColumn(nullable: false)]
     private $lignePanier;
@@ -76,6 +79,18 @@ class Enchere
     public function setFournisseur(?Fournisseur $fournisseur): self
     {
         $this->fournisseur = $fournisseur;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(float $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }

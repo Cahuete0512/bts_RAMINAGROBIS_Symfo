@@ -13,12 +13,15 @@ $(function() {
             contentType: "application/json",
             data: jsonData
         }).done(function(data) {
-            console.log('Enchere enregistrée '+ data);
             var dataObject = JSON.parse(data);
 
             let divPastille = $("#pastille_"+dataObject.idLignePanier);
             divPastille.removeClass();
             divPastille.addClass(dataObject.couleur);
+        }).fail(function(error) {
+            var dataObject = JSON.parse(error.responseJSON);
+
+            alert(dataObject.erreur);
         });
 
     });
