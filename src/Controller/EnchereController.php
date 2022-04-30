@@ -257,6 +257,43 @@ class EnchereController extends AbstractController
         $enchereRepo = $doctrine->getRepository(Enchere::class);
         $enchereRepo->add($enchere);
 
-        return new JsonResponse("{'message': 'c'est OK'}", Response::HTTP_OK);
+        $position = $this->comparerEnchere($enchere, $data->idLigne, $doctrine);
+        $couleur= 'cercle_orange';
+        if ($position == -1){
+            $logger->info('enchere insuffisante');
+            $couleur= 'cercle_rouge';
+        }elseif ($position == 1){
+            $logger->info('enchere la plus haute');
+            $couleur= 'cercle_vert';
+        }
+
+        return new JsonResponse("{\"idLignePanier\":$data->idLigne,\"couleur\": \"$couleur\"}", Response::HTTP_OK);
+    }
+
+    private function comparerEnchere($monEnchere, $idLignePanier, ManagerRegistry $doctrine){
+        $lignePanierRepo = $doctrine->getRepository(LignePanier::class);
+        $lignePanier = $lignePanierRepo->find($idLignePanier);
+
+        $resultat = 0;
+        $count = 0;
+
+        foreach ($lignePanier->getEncheres() as $enchere){
+            if($monEnchere->getPrixEnchere() < $enchere->getPrixEnchere()){
+                $resultat = -1;
+
+                break;
+            }elseif ($monEnchere->getPrixEnchere() == $enchere->getPrixEnchere()){
+                $count ++;
+            }
+        }
+
+        if($resultat != -1 && $count == 1){
+            $resultat = 1;
+        }
+        return $resultat;
+        // TODO : chercher en base toutes les enchères pour la session et le produit
+        // TODO : faire algo pour recup dans une liste les encheres avec les montant le plus important
+        // TODO : faire requête php pour aller chercher le prix d enchere max
+
     }
 }

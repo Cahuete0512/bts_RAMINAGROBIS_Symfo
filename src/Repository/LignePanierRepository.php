@@ -54,7 +54,7 @@ class LignePanierRepository extends ServiceEntityRepository
             ->join('lp.fournisseurs', 'f')
             ->join('f.sessionEnchereFournisseurs', 'sef')
             ->join('sef.sessionEnchere', 'se')
-            ->join('f.encheres', 'e')
+            ->leftJoin('f.encheres', 'e')
             ->andWhere('f = :fournisseur')
             ->andWhere('se.debutEnchere <= :now')
             ->andWhere('se.finEnchere >= :now')

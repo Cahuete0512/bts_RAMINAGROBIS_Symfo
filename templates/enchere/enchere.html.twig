@@ -24,7 +24,7 @@
             </thead>
             <tbody>
             {% for lignePanier in lignesPaniers %}
-                <tr>
+                <tr class="enchere_tr">
                     <td>{{ lignePanier.reference }}</td>
                     <td>{{ lignePanier.quantite }}</td>
                     <td>
@@ -37,7 +37,7 @@
                             <button id="valider_{{ lignePanier.id }}" class="button success outline small rounded btnEnchere" style="float: right" >valider</button>
                         </div>
                     </td>
-                    <td><div class="cercle_vert"></div></td>
+                    <td class="pastille_td"><div id="pastille_{{ lignePanier.id }}" class="cercle_vert"></div></td>
                 </tr>
             {%  endfor  %}
             </tbody>
