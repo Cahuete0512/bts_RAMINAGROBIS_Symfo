@@ -63,7 +63,7 @@ class LignePanierRepository extends ServiceEntityRepository
             ->setParameter('fournisseur', $fournisseur)
             ->setParameter('now', new \DateTime())
             ->orderBy('lp.reference', 'ASC')
-            ->addOrderBy('e.id', 'DESC')
+            ->addOrderBy('e.prixEnchere', 'DESC')
             ->getQuery()
             ->setFetchMode('LignePanier', 'encheres', \Doctrine\ORM\Mapping\ClassMetadata::FETCH_EAGER)
             ->getResult()

@@ -7,7 +7,7 @@
     <div class="cell-md-4"><img width="100px" height="60px" src="{{ asset('logoCentrale.PNG')}}" style="position:center;top:-10px" alt="#"></div>
     <div class="cell-md-5 pos-fixed pos-top-right">
         <h2 style ="color: #FFFFFF; text-align: left;">Société: {{ fournisseur.societe }}</h2>
-    </div>
+    </div><button id="cloreEncheres">Clore</button>
 </div>
     <div class="table striped table-border cell-border"><br>
         <p><table class="table table-border cell-border row-hover">
@@ -29,15 +29,17 @@
                     <td>{{ lignePanier.quantite }}</td>
                     <td>
                         {%  set prix = 0 %}
+                        {%  set couleur = "rouge" %}
                         {%  if lignePanier.encheres is not empty %}
-                            {%  set prix = lignePanier.encheres[lignePanier.encheres|length-1].prixEnchere %}
+                            {%  set prix = lignePanier.encheres[0].prixEnchere %}
+                            {%  set couleur = lignePanier.encheres[0].couleur %}
                         {% endif %}
                         <div class="enchere">
                             <input class="w-50" id="lignePanier_{{ lignePanier.id }}" type="number" data-role="input" data-prepend="Saissez votre nouvelle enchère: " data-default-value="{{ prix }} "/>
                             <button id="valider_{{ lignePanier.id }}" class="button success outline small rounded btnEnchere" style="float: right" >valider</button>
                         </div>
                     </td>
-                    <td class="pastille_td"><div id="pastille_{{ lignePanier.id }}" class="cercle_vert"></div></td>
+                    <td class="pastille_td"><div id="pastille_{{ lignePanier.id }}" class="cercle_{{ couleur }}"></div></td>
                 </tr>
             {%  endfor  %}
             </tbody>

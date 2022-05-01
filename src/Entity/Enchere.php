@@ -94,4 +94,14 @@ class Enchere
 
         return $this;
     }
+
+    public function getCouleur(): ?string{
+        if($this->position == -1){
+            return "rouge";
+        }elseif($this->position == 1){
+            return "vert";
+        }else{
+            return "orange";
+        }
+    }
 }

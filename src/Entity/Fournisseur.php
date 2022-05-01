@@ -23,7 +23,7 @@ class Fournisseur
 
     #[ORM\ManyToMany(targetEntity: LignePanier::class, inversedBy: 'fournisseurs')]
     #[ORM\JoinColumn(nullable: false)]
-    private $lignePaniers;
+    private $lignesPaniers;
 
     #[ORM\OneToMany(mappedBy: 'fournisseur', targetEntity: Enchere::class)]
     private $encheres;
@@ -34,7 +34,7 @@ class Fournisseur
     public function __construct()
     {
         $this->encheres = new ArrayCollection();
-        $this->lignePaniers = new ArrayCollection();
+        $this->lignesPaniers = new ArrayCollection();
         $this->sessionEnchereFournisseurs = new ArrayCollection();
     }
 
@@ -89,9 +89,9 @@ class Fournisseur
         return $this->encheres;
     }
 
-    public function getLignePaniers(): ?Collection
+    public function getLignesPaniers(): ?Collection
     {
-        return $this->lignePaniers;
+        return $this->lignesPaniers;
     }
 
     public function addEnchere(Enchere $enchere): self
@@ -118,8 +118,8 @@ class Fournisseur
 
     public function addLignePanier(LignePanier $lignePanier): self
     {
-        if (!$this->lignePaniers->contains($lignePanier)) {
-            $this->lignePaniers[] = $lignePanier;
+        if (!$this->lignesPaniers->contains($lignePanier)) {
+            $this->lignesPaniers[] = $lignePanier;
             $lignePanier->setFournisseur($this);
         }
 
@@ -128,7 +128,7 @@ class Fournisseur
 
     public function removeLignePanier(LignePanier $lignePanier): self
     {
-        if ($this->lignePaniers->removeElement($lignePanier)) {
+        if ($this->lignesPaniers->removeElement($lignePanier)) {
             // set the owning side to null (unless already changed)
             if ($lignePanier->getFournisseur() === $this) {
                 $lignePanier->setFournisseur(null);

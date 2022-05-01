@@ -10,6 +10,7 @@ use App\Entity\SessionEnchereFournisseur;
 use App\Form\EnchereType;
 use App\Form\SessionEnchereType;
 use App\Service\ApiServiceGetEnchere;
+use App\Service\ApiServicePostCloreEnchere;
 use App\Service\CookieService;
 use App\Service\EmailService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -111,6 +112,41 @@ class EnchereController extends AbstractController
     }
 
     /**
+     * @param Request $request
+     * @param LoggerInterface $logger
+     * @param ManagerRegistry $doctrine
+     * @return Response
+     */
+    #[Route('/enchere/rafraichir', name: 'app_rafraichir_enchere')]
+    public function rafraichir(Request $request,
+                          LoggerInterface $logger,
+                          ManagerRegistry $doctrine): Response
+    {
+        $cookie = $request->cookies->get('cle');
+        $logger->info('cle : ' . $cookie);
+
+        $fournisseurRepo=$doctrine->getRepository(Fournisseur::class);
+        $fournisseur = $fournisseurRepo->findOneByCle($cookie);
+
+        $lignePanierRepo=$doctrine->getRepository(LignePanier::class);
+        $lignesPaniers=$lignePanierRepo->findByFournisseur($fournisseur);
+
+        $nbLignes = count($lignesPaniers);
+        $dataRetour = "{\"data\": [";
+        foreach ($lignesPaniers as $index => $ligne){
+            $couleur = $ligne->getEncheres()[0] == null ? "rouge" : $ligne->getEncheres()[0]->getCouleur();
+            $dataRetour .= "{\"idLignePanier\": ".$ligne->getId().", \"couleur\": \"cercle_$couleur\"}";
+            if(++$index < $nbLignes){
+                $dataRetour .= ",";
+            }
+        }
+        $dataRetour .= "]}";
+
+
+        return new JsonResponse($dataRetour, Response::HTTP_OK);
+    }
+
+    /**
      * @param LoggerInterface $logger
      * @param Request $request
      * @param ManagerRegistry $doctrine
@@ -156,7 +192,7 @@ class EnchereController extends AbstractController
 
             foreach ($panier->lignesPaniersGlobauxList as $lignePanierRecue) {
                 $lignePanier = new LignePanier();
-                $sessionEnchere->getLignePaniers()->add($lignePanier);
+                $sessionEnchere->getLignesPaniers()->add($lignePanier);
                 $lignePanier->setQuantite($lignePanierRecue->quantite);
                 $lignePanier->setReference($lignePanierRecue->produit->reference);
                 $lignePanier->setSessionEnchere($sessionEnchere);
@@ -164,7 +200,7 @@ class EnchereController extends AbstractController
                 foreach ($lignePanierRecue->produit->fournisseurListe as $fournisseurRecu) {
                     // rechercher si le fournisseur existe en BDD, pour créer la relation
                     $fournisseur = $fournisseurRepo->findOneBy(['societe' => $fournisseurRecu->societe]);
-                    $fournisseur->getLignePaniers()->add($lignePanier);
+                    $fournisseur->getLignesPaniers()->add($lignePanier);
                     $lignePanier->getFournisseurs()->add($fournisseur);
 
                     if (!$this->sessionEnchereFournisseurExists($sessionEnchere, $fournisseur)) {
@@ -312,5 +348,59 @@ class EnchereController extends AbstractController
             $resultat = 1;
         }
         return $resultat;
+    }
+
+
+
+    /**
+     * @param Request $request
+     * @param ManagerRegistry $doctrine
+     * @param LoggerInterface $logger
+     * @return JsonResponse
+     */
+    #[Route('/enchere/clore', name: 'clore_enchere', methods: 'POST')]
+    public function clore(Request $request,
+                           ManagerRegistry $doctrine,
+                           LoggerInterface $logger,
+                           ApiServicePostCloreEnchere $apiServicePostCloreEnchere): JsonResponse
+    {
+        $sessionEnchereRepo = $doctrine->getRepository(SessionEnchere::class);
+        $sessionEnchere = $sessionEnchereRepo->findOneBy(["id" => 58]);
+
+        // on itere sur les fournisseurs présents dans la session
+        foreach ($sessionEnchere->getFournisseurs() as $fournisseur){
+            // pour chaque fournisseur
+
+            // on débute un nouveau "fichier csv"
+            $lignesCsv = array();
+
+            // pour chauque LignePanier de ce fournisseur
+            foreach ($fournisseur->getLignesPaniers() as $lignePanier){
+                if($sessionEnchere->getLignesPaniers()->contains($lignePanier)){
+                    // si la LignePanier du foucrnisseur est présente sur cette session
+
+                    $enchereFournisseurMax = null;
+                    // on itere sur les encheres de la LignePanier
+                    foreach ($lignePanier->getEncheres() as $enchere){
+                        if($fournisseur->getEncheres()->contains($enchere)) {
+                            if ($enchereFournisseurMax == null || $enchere->getPrixEnchere() > $enchereFournisseurMax->getPrixEnchere()) {
+                                $enchereFournisseurMax = $enchere;
+                            }
+                        }
+                    }
+                    if($enchereFournisseurMax != null) {
+                        // on ajoute une ligne au fichier
+                        $lignesCsv[] = $lignePanier->getReference().';'.$lignePanier->getQuantite().';'.$enchereFournisseurMax->getPrixEnchere();
+                    }
+
+                }
+            }
+            if(!empty($lignesCsv)) {
+                // on poste le "fichier" à l'appli C# si le tableau n'est pas vide
+                $apiServicePostCloreEnchere->clore($fournisseur->getSociete(), $lignesCsv);
+            }
+        }
+
+        return new JsonResponse( "OK",Response::HTTP_OK);
     }
 }

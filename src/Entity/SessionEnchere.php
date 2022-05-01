@@ -29,14 +29,14 @@ class SessionEnchere
     private $finEnchere;
 
     #[ORM\OneToMany(mappedBy: 'sessionEnchere', targetEntity: LignePanier::class, cascade: ['persist'])]
-    private $lignePaniers;
+    private $lignesPaniers;
 
     #[ORM\OneToMany(mappedBy: 'sessionEnchere', targetEntity: SessionEnchereFournisseur::class, cascade: ['persist'])]
     private $sessionEnchereFournisseurs;
 
     public function __construct()
     {
-        $this->lignePaniers = new ArrayCollection();
+        $this->lignesPaniers = new ArrayCollection();
         $this->sessionEnchereFournisseurs = new ArrayCollection();
     }
 
@@ -89,9 +89,9 @@ class SessionEnchere
     /**
      * @return
      */
-    public function getLignePaniers(): Collection
+    public function getLignesPaniers(): Collection
     {
-        return $this->lignePaniers;
+        return $this->lignesPaniers;
     }
 
     /**
@@ -179,5 +179,14 @@ class SessionEnchere
         }
 
         return $this;
+    }
+
+    public function getFournisseurs(): Collection{
+        $fournisseurs = new ArrayCollection();
+        foreach ($this->sessionEnchereFournisseurs as $sessionEnchereFournisseur){
+            $fournisseurs[] = $sessionEnchereFournisseur->getFournisseur();
+        }
+
+        return $fournisseurs;
     }
 }

@@ -21,14 +21,14 @@ class LignePanier
     #[ORM\Column(type: 'integer')]
     private $quantite;
 
-    #[ORM\ManyToOne(targetEntity: SessionEnchere::class, inversedBy: 'lignePaniers')]
+    #[ORM\ManyToOne(targetEntity: SessionEnchere::class, inversedBy: 'lignesPaniers')]
     #[ORM\JoinColumn(nullable: false)]
     private $sessionEnchere;
 
     #[ORM\OneToMany(mappedBy: 'lignePanier', targetEntity: Enchere::class, fetch: "EAGER")]
     private $encheres;
 
-    #[ORM\ManyToMany(targetEntity: Fournisseur::class, mappedBy: 'lignePaniers', cascade: ['persist'])]
+    #[ORM\ManyToMany(targetEntity: Fournisseur::class, mappedBy: 'lignesPaniers', cascade: ['persist'])]
     private $fournisseurs;
 
     private $statutPrix;
@@ -135,7 +135,7 @@ class LignePanier
     {
         if (!$this->encheres->contains($enchere)) {
             $this->encheres[] = $enchere;
-            $enchere->setLignePaniers($this);
+            $enchere->setLignePanier($this);
         }
 
         return $this;
