@@ -7,18 +7,51 @@
     <div class="cell-md-4"><img width="100px" height="60px" src="{{ asset('logoCentrale.PNG')}}" style="position:center;top:-10px" alt="#"></div>
     <div class="cell-md-5 pos-fixed pos-top-right">
         <h2 style ="color: #FFFFFF; text-align: left;">Société: {{ fournisseur.societe }}</h2>
-    </div><button id="cloreEncheres">Clore</button>
+    </div>
 </div>
     <div class="table striped table-border cell-border"><br>
         <p><table class="table table-border cell-border row-hover">
+            <div class="grid">
+                <div class="row">
+                    <div class="cell-1">
+                        <div class="cercle_vert"></div>
+                    </div>
+                    <div class="cell">
+                        <div>Votre enchère est inférieure aux enchères des autres fournisseurs</div>
+                    </div>
+                    <div class="cell-1">
+                        <div class="cercle_orange"></div>
+                    </div>
+                    <div class="cell">
+                        <div>Votre enchère est à égalité avec celle d'un autre fournisseur</div>
+                    </div>
+                    <div class="cell-1">
+                        <div class="cercle_rouge"></div>
+                    </div>
+                    <div class="cell">
+                        <div>Votre enchère est inférieure aux enchères des autres fournisseurs</div>
+                    </div>
+                </div>
+            </div>
+            <div data-role="accordion" data-one-frame="true" data-show-active="false">
+                <div class="frame">
+                    <div class="heading">Documentation</div>
+                    <div class="content">
+                        <div class="p-2">Enchérissez sur chaque produit en cliquant sur le bouton "valider"</div>
+                        <div class="p-2">Une fois que vous avez fini d'entrer vos prix, cliquez sur "cloturer" pour envoyer vos prix à la centrale</div>
+                    </div>
+                </div>
+            </div>
             <thead>
             <tr>
                 <label>
-                    <input type="text" value="recherche produits" class="w-50" style="height: 30px; width: 200px; float:right;" data-role="input" data-search-button="true">
+                    <input type="text" value="recherche produits" class="w-vh-33-sm" style="float:left;" data-role="input" data-search-button="true">
                 </label>
                 <th><strong>Liste des Produits</strong></th>
                 <th><strong>Quantité</strong></th>
-                <th><strong>Enchere</strong></th>
+                <th><strong>Enchere</strong>
+                    <button id="cloreEncheres" class="button success outline small rounded btnCloreEnchere" style="float: right">Clore l'enchère</button>
+                </th>
                 <th><strong>Votre Position</strong></th>
             </tr>
             </thead>
