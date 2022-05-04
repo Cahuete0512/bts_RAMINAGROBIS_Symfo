@@ -13,26 +13,23 @@
         <p><table class="table table-border cell-border row-hover">
             <div class="grid">
                 <div class="row">
-                    <div class="cell-1">
-                        <div class="cercle_vert"></div>
+                    <div class="cercle_vert">
                     </div>
                     <div class="cell">
-                        <div>Votre enchère est inférieure aux enchères des autres fournisseurs</div>
+                        <div>Votre enchère est supérieure aux enchères des autres fournisseurs</div>
                     </div>
-                    <div class="cell-1">
-                        <div class="cercle_orange"></div>
+                    <div class="cercle_orange">
                     </div>
                     <div class="cell">
                         <div>Votre enchère est à égalité avec celle d'un autre fournisseur</div>
                     </div>
-                    <div class="cell-1">
-                        <div class="cercle_rouge"></div>
+                    <div class="cercle_rouge">
                     </div>
                     <div class="cell">
                         <div>Votre enchère est inférieure aux enchères des autres fournisseurs</div>
                     </div>
                 </div>
-            </div>
+            </div><br>
             <div data-role="accordion" data-one-frame="true" data-show-active="false">
                 <div class="frame">
                     <div class="heading">Documentation</div>
@@ -41,7 +38,7 @@
                         <div class="p-2">Une fois que vous avez fini d'entrer vos prix, cliquez sur "cloturer" pour envoyer vos prix à la centrale</div>
                     </div>
                 </div>
-            </div>
+            </div><br>
             <thead>
             <tr>
                 <label>
@@ -68,7 +65,8 @@
                             {%  set couleur = lignePanier.encheres[0].couleur %}
                         {% endif %}
                         <div class="enchere">
-                            <input class="w-50" id="lignePanier_{{ lignePanier.id }}" type="number" data-role="input" data-prepend="Saissez votre nouvelle enchère: " data-default-value="{{ prix }} "/>
+                            <input class="w-50" id="lignePanier_{{ lignePanier.id }}" type="number" data-role="input"
+                                   data-prepend="Saissez votre nouvelle enchère: " data-default-value="{{ prix }} "/>
                             <button id="valider_{{ lignePanier.id }}" class="button success outline small rounded btnEnchere" style="float: right" >valider</button>
                         </div>
                     </td>
