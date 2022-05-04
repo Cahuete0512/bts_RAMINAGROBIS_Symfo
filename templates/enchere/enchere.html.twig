@@ -42,7 +42,7 @@
             <thead>
             <tr>
                 <label>
-                    <input type="text" value="recherche produits" class="w-vh-33-sm" style="float:left;" data-role="input" data-search-button="true">
+                    <input id="recherchebar" onkeyup="rechercheProduit()" type="text" placeholder="recherche produits" class="w-vh-33-sm" style="float:left;" data-role="input" data-search-button="true">
                 </label>
                 <th><strong>Liste des Produits</strong></th>
                 <th><strong>Quantité</strong></th>
@@ -55,7 +55,7 @@
             <tbody>
             {% for lignePanier in lignesPaniers %}
                 <tr class="enchere_tr">
-                    <td>{{ lignePanier.reference }}</td>
+                    <td class="reference">{{ lignePanier.reference }}</td>
                     <td>{{ lignePanier.quantite }}</td>
                     <td>
                         {%  set prix = 0 %}
@@ -77,4 +77,5 @@
         </table>
     </div>
     <script src="{{ asset('assets/js/enchere.js') }}"></script>
+    <script src="{{ asset('assets/js/rechercheProduit.js') }}"></script>
 {% endblock %}

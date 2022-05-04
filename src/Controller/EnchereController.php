@@ -7,14 +7,11 @@ use App\Entity\Fournisseur;
 use App\Entity\LignePanier;
 use App\Entity\SessionEnchere;
 use App\Entity\SessionEnchereFournisseur;
-use App\Form\EnchereType;
-use App\Form\SessionEnchereType;
 use App\Service\ApiServiceGetEnchere;
 use App\Service\ApiServicePostCloreEnchere;
 use App\Service\CookieService;
 use App\Service\EmailService;
 use Doctrine\Persistence\ManagerRegistry;
-use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,7 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Psr\Log\LoggerInterface;
-use function PHPUnit\Framework\throwException;
 
 class EnchereController extends AbstractController
 {
