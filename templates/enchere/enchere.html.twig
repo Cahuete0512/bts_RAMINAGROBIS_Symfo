@@ -6,7 +6,7 @@
     <br><div class="app-bar pos-absolute bg-black z-2" >
     <div class="cell-md-4"><img width="100px" height="60px" src="{{ asset('logoCentrale.PNG')}}" style="position:center;top:-10px" alt="#"></div>
     <div class="cell-md-5 pos-fixed pos-top-right">
-        <h2 style ="color: #FFFFFF; text-align: left;">Société: {{ fournisseur.societe }}</h2>
+        <h2 style ="color: #FFFFFF; text-align: center;">Société : {{ fournisseur.societe }}</h2>
     </div>
 </div>
     <div class="table striped table-border cell-border"><br>
@@ -34,8 +34,8 @@
                 <div class="frame">
                     <div class="heading">Documentation</div>
                     <div class="content">
-                        <div class="p-2">Enchérissez sur chaque produit en cliquant sur le bouton "valider"</div>
-                        <div class="p-2">Une fois que vous avez fini d'entrer vos prix, cliquez sur "cloturer" pour envoyer vos prix à la centrale</div>
+                        <div class="p-2">- Enchérissez sur chaque produit en cliquant sur le bouton "valider"</div>
+                        <div class="p-2">- Une fois que vos saisies d'enchères sont achevées, cliquez sur "clore l'enchère" pour envoyer vos prix à la centrale</div>
                     </div>
                 </div>
             </div><br>
@@ -43,7 +43,7 @@
             <tr>
                 <label>
                     <input id="recherchebar" onkeyup="rechercheProduit()" type="text" placeholder="recherche produits" class="w-vh-33-sm" style="float:left;" data-role="input" data-search-button="true">
-                </label>
+                </label><br>
                 <th><strong>Liste des Produits</strong></th>
                 <th><strong>Quantité</strong></th>
                 <th><strong>Enchere</strong>
@@ -55,7 +55,7 @@
             <tbody>
             {% for lignePanier in lignesPaniers %}
                 <tr class="enchere_tr">
-                    <td class="reference">{{ lignePanier.reference }}</td>
+                    <td>{{ lignePanier.reference }}</td>
                     <td>{{ lignePanier.quantite }}</td>
                     <td>
                         {%  set prix = 0 %}

@@ -67,6 +67,24 @@ $(function() {
     }, 30000);
 
 
+    window.setInterval(function(){
+        rappel();
+    }, 30*60*1000);
+
+    var rappel = function(){
+        cookieStore.get('cle').then(function(cookie){
+            let now = new Date();
+            let endDate = new Date(cookie.expires);
+            let warningDate = new Date(cookie.expires - 12*60*1000);
+
+            if(warningDate > now){
+                alert("Pensez à cloturer votre enchere avant le " + endDate.toLocaleDateString('fr-FR') + ' à ' + endDate.toLocaleTimeString('fr-FR'));
+            }
+
+        });
+    }
+
+    rappel();
 
     $('#cloreEncheres').click(function(){
 
@@ -80,4 +98,9 @@ $(function() {
             alert(error);
         });
     });
+
+
+
+
 });
+

@@ -64,7 +64,13 @@ class EnchereController extends AbstractController
 
         if($request->cookies->get('cle') === null) {
             $logger->info("création du cookie pour la session d'enchere");
-            $cookie = new Cookie('cle', $sessionEnchereFournisseur->getCleConnexion(), $sessionEnchereFournisseur->getSessionEnchere()->getFinEnchere());
+            $cookie = new Cookie('cle',
+                $sessionEnchereFournisseur->getCleConnexion(),
+                $sessionEnchereFournisseur->getSessionEnchere()->getFinEnchere(),
+                '/',
+                null,
+                false,
+                false);
             $res = new Response();
             $res->headers->setCookie($cookie);
             $res->send();
@@ -99,7 +105,6 @@ class EnchereController extends AbstractController
             $logger->info("Aucune ligne de panier trouvée");
             return $this->redirectToRoute('app_enchere_inexistante');
         }
-
 
         return $this->render('enchere/enchere.html.twig', [
             'lignesPaniers' => $lignesPaniers,
@@ -174,6 +179,7 @@ class EnchereController extends AbstractController
             $logger->info("Création de la session d'enchère");
 
             $panier = $apiServiceGetEnchere->getApiData($datas->idPanier);
+            $logger->info(var_dump($panier));
 
             // on enregistre les fournisseurs
             $fournisseurRepo = $doctrine->getRepository(Fournisseur::class);
