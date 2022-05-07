@@ -63,7 +63,8 @@ class EnchereController extends AbstractController
         }
 
         $sessionEnchereFournisseur = $fournisseur->getSessionEnchereFournisseurActuelle();
-        if($sessionEnchereFournisseur === null){
+
+        if($sessionEnchereFournisseur === null || $sessionEnchereFournisseur->getFermee()){
             $logger->info("Aucune session d'enchere trouvée");
             return $this->redirectToRoute('app_session_enchere_inexistante');
         }
@@ -215,6 +216,7 @@ class EnchereController extends AbstractController
                         $sessionEnchereFournisseur->setSessionEnchere($sessionEnchere);
                         $sessionEnchereFournisseur->setFournisseur($fournisseur);
                         $sessionEnchereFournisseur->setCleConnexion(md5(rand()));
+                        $sessionEnchereFournisseur->setFermee(false);
                         $sessionEnchere->addSessionEnchereFournisseur($sessionEnchereFournisseur);
                     }
                 }
@@ -367,49 +369,57 @@ class EnchereController extends AbstractController
      * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    #[Route('/enchere/clore', name: 'clore_enchere', methods: 'POST')]
+    #[Route('/enchere/clore', name: 'clore_enchere', methods: 'GET')]
     public function clore(Request $request,
                            ManagerRegistry $doctrine,
                            LoggerInterface $logger,
-                           ApiServicePostCloreEnchere $apiServicePostCloreEnchere): JsonResponse
+                           ApiServicePostCloreEnchere $apiServicePostCloreEnchere): Response
     {
-        $sessionEnchereRepo = $doctrine->getRepository(SessionEnchere::class);
-        $sessionEnchere = $sessionEnchereRepo->findOneBy(["id" => 58]);
 
-        // on itere sur les fournisseurs présents dans la session
-        foreach ($sessionEnchere->getFournisseurs() as $fournisseur){
-            // pour chaque fournisseur
+        $cle = $request->cookies->get('cle');
 
-            // on débute un nouveau "fichier csv"
-            $lignesCsv = array();
+        $fournisseurRepo=$doctrine->getRepository(Fournisseur::class);
+        $fournisseur = $fournisseurRepo->findOneByCle($cle);
 
-            // pour chauque LignePanier de ce fournisseur
-            foreach ($fournisseur->getLignesPaniers() as $lignePanier){
-                if($sessionEnchere->getLignesPaniers()->contains($lignePanier)){
-                    // si la LignePanier du foucrnisseur est présente sur cette session
+        $sessionEnchereFournisseur = $fournisseur->getSessionEnchereFournisseurActuelle();
 
-                    $enchereFournisseurMax = null;
-                    // on itere sur les encheres de la LignePanier
-                    foreach ($lignePanier->getEncheres() as $enchere){
-                        if($fournisseur->getEncheres()->contains($enchere)) {
-                            if ($enchereFournisseurMax == null || $enchere->getPrixEnchere() > $enchereFournisseurMax->getPrixEnchere()) {
-                                $enchereFournisseurMax = $enchere;
-                            }
+        // on débute un nouveau "fichier csv"
+        $lignesCsv = array();
+
+        // pour chaque LignePanier de ce fournisseur
+        foreach ($fournisseur->getLignesPaniers() as $lignePanier){
+            if($sessionEnchereFournisseur->getSessionEnchere()->getLignesPaniers()->contains($lignePanier)){
+                // si la LignePanier du fournisseur est présente sur cette session
+
+                $enchereFournisseurMax = null;
+                // on itere sur les encheres de la LignePanier
+                foreach ($lignePanier->getEncheres() as $enchere){
+                    if($fournisseur->getEncheres()->contains($enchere)) {
+                        if ($enchereFournisseurMax == null || $enchere->getPrixEnchere() > $enchereFournisseurMax->getPrixEnchere()) {
+                            $enchereFournisseurMax = $enchere;
                         }
                     }
-                    if($enchereFournisseurMax != null) {
-                        // on ajoute une ligne au fichier
-                        $lignesCsv[] = $lignePanier->getReference().';'.$lignePanier->getQuantite().';'.$enchereFournisseurMax->getPrixEnchere();
-                    }
-
                 }
-            }
-            if(!empty($lignesCsv)) {
-                // on poste le "fichier" à l'appli C# si le tableau n'est pas vide
-                $apiServicePostCloreEnchere->clore($fournisseur->getSociete(), $lignesCsv);
+                if($enchereFournisseurMax != null) {
+                    // on ajoute une ligne au fichier
+                    $lignesCsv[] = $lignePanier->getReference().';'.$lignePanier->getQuantite().';'.$enchereFournisseurMax->getPrixEnchere();
+                }
+
             }
         }
+        if(!empty($lignesCsv)) {
+            // on poste le "fichier" à l'appli C# si le tableau n'est pas vide
+            $apiServicePostCloreEnchere->clore($fournisseur->getSociete(), $lignesCsv);
+        }
 
-        return new JsonResponse( "OK",Response::HTTP_OK);
+        $sessionEnchereFournisseur->setFermee(true);
+        $doctrine->getManager()->flush();
+
+
+        $res = new Response();
+        $res->headers->clearCookie('cle');
+        $res->send();
+
+        return $this->redirectToRoute('app_session_enchere_inexistante');
     }
 }

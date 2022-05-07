@@ -64,18 +64,5 @@ $(function() {
         });
     }
     rappel()
-
-    $('#cloreEncheres').click(function(){
-
-        $.ajax({
-            method: "POST",
-            url: "http://127.0.0.1:8000/enchere/clore",
-            contentType: "application/json"
-        }).done(function(data) {
-            alert("Encheres closes");
-        }).fail(function(error) {
-            alert(error);
-        });
-    });
 });
 

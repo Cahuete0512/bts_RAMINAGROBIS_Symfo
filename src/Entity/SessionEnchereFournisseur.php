@@ -16,6 +16,9 @@ class SessionEnchereFournisseur
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $cleConnexion;
 
+    #[ORM\Column(type: 'boolean', nullable: false)]
+    private $fermee;
+
     #[ORM\ManyToOne(targetEntity: Fournisseur::class, inversedBy: 'sessionEnchereFournisseurs')]
     #[ORM\JoinColumn(nullable: false)]
     private $fournisseur;
@@ -32,6 +35,18 @@ class SessionEnchereFournisseur
     public function getCleConnexion(): ?string
     {
         return $this->cleConnexion;
+    }
+
+    public function setFermee(bool $fermee): self
+    {
+        $this->fermee = $fermee;
+
+        return $this;
+    }
+
+    public function getFermee(): ?bool
+    {
+        return $this->fermee;
     }
 
     public function setCleConnexion(string $cleConnexion): self
