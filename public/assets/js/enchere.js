@@ -24,10 +24,8 @@ $(function() {
         });
     });
 
-
     window.setInterval(function(){
         console.log("refresh");
-
 
         $.ajax({
             method: "GET",
@@ -35,20 +33,6 @@ $(function() {
             contentType: "application/json"
         }).done(function(data) {
             let dataObject = JSON.parse(data);
-
-            let reponseFactice =
-            { "data" :
-                [
-                    {
-                        "idLignePanier": 5387,
-                        "couleur": "cercle_orange"
-                    },
-                    {
-                        "idLignePanier" : 5329,
-                        "couleur": "cercle_rouge"
-                    }
-                ]
-            };
 
             dataObject.data.forEach(function (ligne){
                 let divPastille = $("#pastille_"+ligne.idLignePanier);
@@ -61,14 +45,11 @@ $(function() {
 
             alert(dataObject.erreur);
         });
-
-
 // FIXME: le rafraichissement se fait actuellement toutes les 30 secondes
     }, 30000);
 
-
     window.setInterval(function(){
-        rappel();
+        rappel()
     }, 30*60*1000);
 
     var rappel = function(){
@@ -80,11 +61,9 @@ $(function() {
             if(warningDate > now){
                 alert("Pensez à cloturer votre enchere avant le " + endDate.toLocaleDateString('fr-FR') + ' à ' + endDate.toLocaleTimeString('fr-FR'));
             }
-
         });
     }
-
-    rappel();
+    rappel()
 
     $('#cloreEncheres').click(function(){
 
@@ -98,9 +77,5 @@ $(function() {
             alert(error);
         });
     });
-
-
-
-
 });
 

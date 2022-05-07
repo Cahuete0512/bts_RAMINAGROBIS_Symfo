@@ -22,7 +22,13 @@ use Psr\Log\LoggerInterface;
 
 class EnchereController extends AbstractController
 {
-
+    /**
+     * @param ApiServiceGetEnchere $apiService
+     * @param Request $request
+     * @param ManagerRegistry $doctrine
+     * @param EmailService $emailService
+     * @return Response
+     */
     #[Route('/', name: 'index')]
     public function test(ApiServiceGetEnchere $apiService,
                           Request $request,
@@ -143,7 +149,6 @@ class EnchereController extends AbstractController
         }
         $dataRetour .= "]}";
 
-
         return new JsonResponse($dataRetour, Response::HTTP_OK);
     }
 
@@ -216,7 +221,6 @@ class EnchereController extends AbstractController
             }
 
             $sessionEnchereRepo->add($sessionEnchere);
-
 
             $logger->info('Envoie des emails ');
             $fournisseurRepo = $doctrine->getRepository(Fournisseur::class);
@@ -352,13 +356,16 @@ class EnchereController extends AbstractController
         return $resultat;
     }
 
-
-
     /**
      * @param Request $request
      * @param ManagerRegistry $doctrine
      * @param LoggerInterface $logger
+     * @param ApiServicePostCloreEnchere $apiServicePostCloreEnchere
      * @return JsonResponse
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     #[Route('/enchere/clore', name: 'clore_enchere', methods: 'POST')]
     public function clore(Request $request,
