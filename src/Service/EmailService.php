@@ -39,12 +39,20 @@ class EmailService
         $url = $this->router->generate('app_acces_enchere', ['cle' => $cle], urlGeneratorInterface::ABSOLUTE_URL);
 
         $num = $sessionEnchere->getNumeroSemaine();
+        $debutEnchere = $sessionEnchere->getDebutEnchere()->format('d-m-Y H:i:s');
+        $finEnchere = $sessionEnchere->getFinEnchere()->format('d-m-Y H:i:s');
         $email = (new Email())
             ->from('ramine.agrobis@gmail.com')
             ->to($fournisseur->getEmail())
             ->subject('Votre session d enchere est ouverte!')
             ->text('Sending emails is fun again!')
-            ->html("<p>lien pour l'enchere : $url pour la semaine : $num</p>");
+            ->html("<p>Bonjour, </p>
+                          <p> Veuillez trouver ci-joint votre lien pour accéder aux enchères : $url pour la semaine $num du $debutEnchere au $finEnchere</p>
+                          <p> Ce lien se détruira à la fin de cette semaine le $finEnchere</p>
+                          <p> Pensez à bien clôturer vos enchères avant la fin de cette période pour que vos prix soient bien récupérés et enregistrés par la centrale RAMINAGROBIS
+                          <br><p> Toute notre équipe vous souhaite une bonne journée</p>
+                          <br><p> Coridalement</p>
+                          <br><br><p>RAMINAGROBIS</p>");
 
         $this->mailer->send($email);
 
