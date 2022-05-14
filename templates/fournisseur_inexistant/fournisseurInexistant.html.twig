@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}fournisseur inexistant{% endblock %}
+
+{% block body %}
+    <div style="height:200px">
+        <h1 style="text-align: center">
+            <strong>fournisseur inconnu !!!</strong>
+        </h1>
+    </div>
+    <div class="center">
+        <img width="30%" height="15%" style="display:block; margin-left: auto; margin-right: auto;"
+             src="{{ asset('fournisseurInexistant.PNG')}}" alt="fournisseur non-valide">
+    </div>
+{% endblock body %}
