@@ -45,18 +45,18 @@ $(function() {
 
             alert(dataObject.erreur);
         });
-// FIXME: le rafraichissement se fait actuellement toutes les 30 secondes
+// FIXME: le rafraichissement des pastilles se fait actuellement toutes les 30 secondes
     }, 30000);
-
+//On appel la méthode "rappel" toutes les 30 minutes
     window.setInterval(function(){
         rappel()
     }, 30*60*1000);
-
+//Si la date de fin de cookie - 12 heures est supérieure à maintenant, alors on affiche le message
     var rappel = function(){
         cookieStore.get('cle').then(function(cookie){
             let now = new Date();
             let endDate = new Date(cookie.expires);
-            let warningDate = new Date(cookie.expires - 12*60*1000);
+            let warningDate = new Date(cookie.expires - 12*60*60*1000);
 
             if(warningDate > now){
                 alert("Pensez à cloturer votre enchere avant le " + endDate.toLocaleDateString('fr-FR') + ' à ' + endDate.toLocaleTimeString('fr-FR'));
