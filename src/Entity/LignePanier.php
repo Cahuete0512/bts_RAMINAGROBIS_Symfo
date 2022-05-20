@@ -42,7 +42,8 @@ class LignePanier
     }
 
     /**
-     * @param mixed $statutPrix
+     * @param $statutPrix
+     * @return $this
      */
     public function setStatutPrix($statutPrix): self
     {
@@ -119,11 +120,18 @@ class LignePanier
         return $this->encheres;
     }
 
+    /**
+     * @return SessionEnchere|null
+     */
     public function getSessionEnchere(): ?SessionEnchere
     {
         return $this->sessionEnchere;
     }
 
+    /**
+     * @param SessionEnchere|null $sessionEnchere
+     * @return $this
+     */
     public function setSessionEnchere(?SessionEnchere $sessionEnchere): self
     {
         $this->sessionEnchere = $sessionEnchere;
@@ -131,6 +139,10 @@ class LignePanier
         return $this;
     }
 
+    /**
+     * @param Enchere $enchere
+     * @return $this
+     */
     public function addEnchere(Enchere $enchere): self
     {
         if (!$this->encheres->contains($enchere)) {
@@ -141,6 +153,10 @@ class LignePanier
         return $this;
     }
 
+    /**
+     * @param Enchere $enchere
+     * @return $this
+     */
     public function removeEnchere(Enchere $enchere): self
     {
         if ($this->encheres->removeElement($enchere)) {
@@ -153,6 +169,10 @@ class LignePanier
         return $this;
     }
 
+    /**
+     * @param Fournisseur $fournisseur
+     * @return $this
+     */
     public function addFournisseur(Fournisseur $fournisseur): self
     {
         if (!$this->fournisseurs->contains($fournisseur)) {
@@ -163,6 +183,10 @@ class LignePanier
         return $this;
     }
 
+    /**
+     * @param Fournisseur $fournisseur
+     * @return $this
+     */
     public function removeFournisseur(Fournisseur $fournisseur): self
     {
         if ($this->fournisseurs->removeElement($fournisseur)) {

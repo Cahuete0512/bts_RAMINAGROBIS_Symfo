@@ -87,7 +87,7 @@ class SessionEnchere
     }
 
     /**
-     * @return
+     * @return Collection
      */
     public function getLignesPaniers(): Collection
     {
@@ -132,6 +132,10 @@ class SessionEnchere
         return $this;
     }
 
+    /**
+     * @param LignePanier $idLignePanier
+     * @return $this
+     */
     public function addIdLignePanier(LignePanier $idLignePanier): self
     {
         if (!$this->id_ligne_panier->contains($idLignePanier)) {
@@ -142,6 +146,10 @@ class SessionEnchere
         return $this;
     }
 
+    /**
+     * @param LignePanier $idLignePanier
+     * @return $this
+     */
     public function removeIdLignePanier(LignePanier $idLignePanier): self
     {
         if ($this->id_ligne_panier->removeElement($idLignePanier)) {
@@ -154,11 +162,18 @@ class SessionEnchere
         return $this;
     }
 
+    /**
+     * @return Collection
+     */
     public function getSessionEnchereFournisseurs(): Collection
     {
         return $this->sessionEnchereFournisseurs;
     }
 
+    /**
+     * @param SessionEnchereFournisseur $sessionEnchereFournisseur
+     * @return $this
+     */
     public function addSessionEnchereFournisseur(SessionEnchereFournisseur $sessionEnchereFournisseur): self
     {
         if (!$this->sessionEnchereFournisseurs->contains($sessionEnchereFournisseur)) {
@@ -169,6 +184,10 @@ class SessionEnchere
         return $this;
     }
 
+    /**
+     * @param SessionEnchereFournisseur $sessionEnchereFournisseur
+     * @return $this
+     */
     public function removeSessionEnchereFournisseur(SessionEnchereFournisseur $sessionEnchereFournisseur): self
     {
         if ($this->sessionEnchereFournisseurs->removeElement($sessionEnchereFournisseur)) {
@@ -181,6 +200,9 @@ class SessionEnchere
         return $this;
     }
 
+    /**
+     * @return Collection
+     */
     public function getFournisseurs(): Collection{
         $fournisseurs = new ArrayCollection();
         foreach ($this->sessionEnchereFournisseurs as $sessionEnchereFournisseur){

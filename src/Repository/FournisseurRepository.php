@@ -16,14 +16,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FournisseurRepository extends ServiceEntityRepository
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Fournisseur::class);
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param Fournisseur $entity
+     * @param bool $flush
      */
     public function add(Fournisseur $entity, bool $flush = true): void
     {
@@ -34,8 +37,8 @@ class FournisseurRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param Fournisseur $entity
+     * @param bool $flush
      */
     public function remove(Fournisseur $entity, bool $flush = true): void
     {
@@ -46,7 +49,8 @@ class FournisseurRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Fournisseur[] Returns an array of Fournisseur objects
+     * @param $sessionEnchere
+     * @return int|mixed|string
      */
     public function findBySessionEnchere($sessionEnchere)
     {
@@ -59,6 +63,11 @@ class FournisseurRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * @param $cle
+     * @return Fournisseur|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function findOneByCle($cle): ?Fournisseur
     {
         return $this->createQueryBuilder('f')

@@ -16,14 +16,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EnchereRepository extends ServiceEntityRepository
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Enchere::class);
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param Enchere $entity
+     * @param bool $flush
      */
     public function add(Enchere $entity, bool $flush = true): void
     {
@@ -34,8 +37,8 @@ class EnchereRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param Enchere $entity
+     * @param bool $flush
      */
     public function remove(Enchere $entity, bool $flush = true): void
     {
@@ -45,6 +48,9 @@ class EnchereRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function updateStatut(): void
     {
         $conn = $this->getEntityManager()->getConnection();

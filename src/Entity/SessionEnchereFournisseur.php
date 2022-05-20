@@ -27,16 +27,26 @@ class SessionEnchereFournisseur
     #[ORM\JoinColumn(nullable: false)]
     private $sessionEnchere;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCleConnexion(): ?string
     {
         return $this->cleConnexion;
     }
 
+    /**
+     * @param bool $fermee
+     * @return $this
+     */
     public function setFermee(bool $fermee): self
     {
         $this->fermee = $fermee;
@@ -44,11 +54,18 @@ class SessionEnchereFournisseur
         return $this;
     }
 
+    /**
+     * @return bool|null
+     */
     public function getFermee(): ?bool
     {
         return $this->fermee;
     }
 
+    /**
+     * @param string $cleConnexion
+     * @return $this
+     */
     public function setCleConnexion(string $cleConnexion): self
     {
         $this->cleConnexion = $cleConnexion;
@@ -56,11 +73,18 @@ class SessionEnchereFournisseur
         return $this;
     }
 
+    /**
+     * @return Fournisseur|null
+     */
     public function getFournisseur(): ?Fournisseur
     {
         return $this->fournisseur;
     }
 
+    /**
+     * @param Fournisseur $fournisseur
+     * @return $this
+     */
     public function setFournisseur(Fournisseur $fournisseur): self
     {
         $this->fournisseur = $fournisseur;
@@ -68,11 +92,18 @@ class SessionEnchereFournisseur
         return $this;
     }
 
+    /**
+     * @return SessionEnchere|null
+     */
     public function getSessionEnchere(): ?SessionEnchere
     {
         return $this->sessionEnchere;
     }
 
+    /**
+     * @param SessionEnchere $sessionEnchere
+     * @return $this
+     */
     public function setSessionEnchere(SessionEnchere $sessionEnchere): self
     {
         $this->sessionEnchere = $sessionEnchere;

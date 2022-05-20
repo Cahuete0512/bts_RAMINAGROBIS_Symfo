@@ -38,6 +38,9 @@ class Fournisseur
         $this->sessionEnchereFournisseurs = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
@@ -89,11 +92,18 @@ class Fournisseur
         return $this->encheres;
     }
 
+    /**
+     * @return Collection|null
+     */
     public function getLignesPaniers(): ?Collection
     {
         return $this->lignesPaniers;
     }
 
+    /**
+     * @param Enchere $enchere
+     * @return $this
+     */
     public function addEnchere(Enchere $enchere): self
     {
         if (!$this->encheres->contains($enchere)) {
@@ -104,10 +114,13 @@ class Fournisseur
         return $this;
     }
 
+    /**
+     * @param Enchere $enchere
+     * @return $this
+     */
     public function removeEnchere(Enchere $enchere): self
     {
         if ($this->encheres->removeElement($enchere)) {
-            // set the owning side to null (unless already changed)
             if ($enchere->getFournisseur() === $this) {
                 $enchere->setFournisseur(null);
             }
@@ -116,6 +129,10 @@ class Fournisseur
         return $this;
     }
 
+    /**
+     * @param LignePanier $lignePanier
+     * @return $this
+     */
     public function addLignePanier(LignePanier $lignePanier): self
     {
         if (!$this->lignesPaniers->contains($lignePanier)) {
@@ -126,6 +143,10 @@ class Fournisseur
         return $this;
     }
 
+    /**
+     * @param LignePanier $lignePanier
+     * @return $this
+     */
     public function removeLignePanier(LignePanier $lignePanier): self
     {
         if ($this->lignesPaniers->removeElement($lignePanier)) {
@@ -138,11 +159,18 @@ class Fournisseur
         return $this;
     }
 
+    /**
+     * @return Collection
+     */
     public function getSessionEnchereFournisseurs(): Collection
     {
         return $this->sessionEnchereFournisseurs;
     }
 
+    /**
+     * @param Collection $sessionsEncheresFournisseurs
+     * @return $this
+     */
     public function setSessionEnchereFournisseurs(Collection $sessionsEncheresFournisseurs): self
     {
         $this->sessionEnchereFournisseurs = $sessionsEncheresFournisseurs;
@@ -150,6 +178,10 @@ class Fournisseur
         return $this;
     }
 
+    /**
+     * @param SessionEnchereFournisseur $sessionEnchereFournisseur
+     * @return $this
+     */
     public function addSessionEnchereFournisseur(SessionEnchereFournisseur $sessionEnchereFournisseur): self
     {
         if (!$this->sessionEnchereFournisseurs->contains($sessionEnchereFournisseur)) {
@@ -160,6 +192,10 @@ class Fournisseur
         return $this;
     }
 
+    /**
+     * @param SessionEnchereFournisseur $sessionEnchereFournisseur
+     * @return $this
+     */
     public function removeSessionEnchereFournisseur(SessionEnchereFournisseur $sessionEnchereFournisseur): self
     {
         if ($this->sessionEnchereFournisseurs->removeElement($sessionEnchereFournisseur)) {

@@ -25,8 +25,8 @@ class SessionEnchereRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param SessionEnchere $entity
+     * @param bool $flush
      */
     public function add(SessionEnchere $entity, bool $flush = true): void
     {
@@ -54,8 +54,8 @@ class SessionEnchereRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param SessionEnchere $entity
+     * @param bool $flush
      */
     public function remove(SessionEnchere $entity, bool $flush = true): void
     {

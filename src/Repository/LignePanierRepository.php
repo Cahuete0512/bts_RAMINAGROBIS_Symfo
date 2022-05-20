@@ -17,14 +17,17 @@ use Doctrine\ORM\Query\Expr;
  */
 class LignePanierRepository extends ServiceEntityRepository
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, LignePanier::class);
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param LignePanier $entity
+     * @param bool $flush
      */
     public function add(LignePanier $entity, bool $flush = true): void
     {
@@ -35,8 +38,8 @@ class LignePanierRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param LignePanier $entity
+     * @param bool $flush
      */
     public function remove(LignePanier $entity, bool $flush = true): void
     {
@@ -47,7 +50,8 @@ class LignePanierRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return LignePanier[] Returns an array of LignePanier objects
+     * @param $fournisseur
+     * @return int|mixed|string
      */
     public function findByFournisseur($fournisseur)
     {

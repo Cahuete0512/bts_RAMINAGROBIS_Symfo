@@ -16,14 +16,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SessionEnchereFournisseurRepository extends ServiceEntityRepository
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SessionEnchereFournisseur::class);
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param SessionEnchereFournisseur $entity
+     * @param bool $flush
      */
     public function add(SessionEnchereFournisseur $entity, bool $flush = true): void
     {
@@ -34,8 +37,8 @@ class SessionEnchereFournisseurRepository extends ServiceEntityRepository
     }
 
     /**
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param SessionEnchereFournisseur $entity
+     * @param bool $flush
      */
     public function remove(SessionEnchereFournisseur $entity, bool $flush = true): void
     {
